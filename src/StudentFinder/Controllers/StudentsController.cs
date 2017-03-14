@@ -9,6 +9,7 @@ using StudentFinder.Data;
 using StudentFinder.Models;
 using StudentFinder.ViewModels;
 using StudentFinder.Infrastructure;
+using System.Collections;
 
 namespace StudentFinder.Controllers
 {
@@ -114,11 +115,26 @@ namespace StudentFinder.Controllers
         {
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
-            
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
-            //ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
-            ViewBag.ScheduleList = new List<Schedule>();
 
+            //var scheduleList = _context.Schedule
+            //    .OrderBy(x => x.FromValue)
+            //    .Select(x => new
+            //    {
+            //        id = x.Id,
+            //        from = x.FromValue,
+            //        to = x.ToValue,
+            //        label = x.Label
+            //    }).ToList();
+
+            //var scheduleLabelList = _context.Schedule.OrderBy(s => s.From).Select(a => new { id = a.Id, label = a.Label }).ToList();
+            ////ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
+            //ViewBag.scheduleLabeList = new SelectList(scheduleLabelList, "id", "value");
+
+            ////var scheduleFromList = _context.Schedule.OrderBy(s => s.From).Select(a => new {  = a.Id, label = a.Label }).ToList();
+
+            ////ViewBag.scheduleFromList = new SelectList(scheduleFromList, "id", "value");
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            ViewBag.scheduleViewBag = scheduleList;
 
             ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
 
@@ -130,11 +146,12 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student)
+        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, [Bind("id)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(student);
+                //_context.Add()
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
