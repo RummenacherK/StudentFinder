@@ -1,4 +1,4 @@
-@model StudentFinder.Models.Student
+@model StudentFinder.Models.StudentScheduleSpace
 
 @using StudentFinder.Models
 
@@ -6,7 +6,8 @@
     ViewData["Title"] = "Create";
     SelectList spaceList = ViewBag.SpaceSelectList;
     SelectList gradeLevel = ViewBag.gradeLevelSelectList;
-    SelectList scheduleList = ViewBag.ScheduleList;
+    IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
+    //var superscheduleList = new List<Schedule>();
 
 }
 
@@ -26,62 +27,84 @@
             </div>*@
 
         <div class="form-group">
-            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <label asp-for="Student.GradeLevel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
 
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="StudentSchoolId" class="col-md-2 control-label"></label>
+            <label asp-for="Student.StudentSchoolId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="StudentSchoolId" class="form-control" />
-                <span asp-validation-for="StudentSchoolId" class="text-danger" />
+                <input asp-for="Student.StudentSchoolId" class="form-control" />
+                <span asp-validation-for="Student.StudentSchoolId" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
+            <label asp-for="Student.StudentsSchool" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="StudentsSchool" class="form-control" />
-                <span asp-validation-for="StudentsSchool" class="text-danger" />
+                <input asp-for="Student.StudentsSchool" class="form-control" />
+                <span asp-validation-for="Student.StudentsSchool" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="fName" class="col-md-2 control-label"></label>
+            <label asp-for="Student.fName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="fName" class="form-control" />
-                <span asp-validation-for="fName" class="text-danger" />
+                <input asp-for="Student.fName" class="form-control" />
+                <span asp-validation-for="Student.fName" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="lName" class="col-md-2 control-label"></label>
+            <label asp-for="Student.lName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="lName" class="form-control" />
-                <span asp-validation-for="lName" class="text-danger" />
+                <input asp-for="Student.lName" class="form-control" />
+                <span asp-validation-for="Student.lName" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="IsActive" class="col-md-2 control-label"></label>
+            <label asp-for="Student.IsActive" class="col-md-2 control-label"></label>
             <div>
-                <input asp-for="IsActive" class="checkbox" />
-                <span asp-validation-for="IsActive" class="text-danger"></span>
+                <input asp-for="Student.IsActive" class="checkbox" />
+                <span asp-validation-for="Student.IsActive" class="text-danger"></span>
             </div>
         </div>
 
-        @*<table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Room</th>
+                </tr>
+            </thead>
             <tbody>
                 @foreach (var item in scheduleList)
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor()
-                            @Html.DisplayFor(x => item.Group)
+                            @item.Label
+                        </td>
+                        <td>
+                            @item.FromValue
+                        </td>
+                        <td>
+                            @item.ToValue
+                        </td>
+                        <td>
+                            <div class="form-group">
+
+                                <div class="col-md-10">
+                                    @*@Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })*@
+                                    @Html.DropDownList("spaceSelectList", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                </div>
+                            </div>
                         </td>
                     </tr>
-                }
 
+                }
             </tbody>
-        </table>*@
+        </table>
 
 
 
