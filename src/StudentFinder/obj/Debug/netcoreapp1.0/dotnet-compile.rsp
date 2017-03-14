@@ -228,7 +228,6 @@
 --resource:"C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\obj\Debug\netcoreapp1.0\StudentFinderdotnet-compile.deps.json",StudentFinder.deps.json
 C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\Program.cs
 C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\Startup.cs
-C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\Utilities.cs
 C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\Controllers\AccountController.cs
 C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\Controllers\ManageController.cs
 C:\Users\krumm\Desktop\GitHub\StudentFinder\src\StudentFinder\Controllers\SchedulesController.cs
