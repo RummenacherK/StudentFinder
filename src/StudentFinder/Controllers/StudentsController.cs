@@ -9,6 +9,7 @@ using StudentFinder.Data;
 using StudentFinder.Models;
 using StudentFinder.ViewModels;
 using StudentFinder.Infrastructure;
+using System.Collections;
 
 namespace StudentFinder.Controllers
 {
@@ -22,7 +23,7 @@ namespace StudentFinder.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0, int some_ID = 3)
+        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0 /*int some_ID = 0*/)
         {
 
             //var spaceSort = _context.StudentScheduleSpace.OrderBy(c => c. Space.Id).Select(a => new { id = a.i})
@@ -39,12 +40,22 @@ namespace StudentFinder.Controllers
 
 
             //IQueryable<StudentsViewModel> studentsVM;
-
+            
             var student = new Student();
-            //var some_ID = 5;
+                                       
+            var some_ID = 20;
 
-            var s_all = _context.StudentScheduleSpace.Where(s => s.ScheduleId == some_ID).Select(x => x);
-            //var s_all = student.StudentScheduleSpace.Where(s => s.ScheduleId == some_ID).Select(x => x);
+            //Select only Active Students       
+            var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true).Select(x => x);
+
+            //Select only students that have the current schedule Id
+            var s_all = activeStudents.Where(s => s.ScheduleId == some_ID).Select(x => x);
+
+
+            //Old s_all code
+            //var s_all = _context.StudentScheduleSpace.Where(s => s.ScheduleId == some_ID).Select(x => x);
+
+
 
             if (spaceListFilter > 0)
             {
@@ -55,10 +66,8 @@ namespace StudentFinder.Controllers
             {
                 s_all = s_all.Where(s => s.Student.fName.Contains(searchString) || s.Student.lName.Contains(searchString));
             }
-
-            
-
-            var test = s_all.Select(s => new StudentsViewModel()
+                   
+            var selectedStudents = s_all.Select(s => new StudentsViewModel()
             {
                 StudentId = s.Student.Id,
                 fName = s.Student.fName,
@@ -72,7 +81,7 @@ namespace StudentFinder.Controllers
 
             int pageSize = 25;
 
-            return View(await PaginatedList<StudentsViewModel>.CreateAsync(test.AsNoTracking(), page ?? 1, pageSize));
+            return View(await PaginatedList<StudentsViewModel>.CreateAsync(selectedStudents.AsNoTracking(), page ?? 1, pageSize));
         }
 
         // GET: Students/Details/5
@@ -88,6 +97,9 @@ namespace StudentFinder.Controllers
 
             var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
+            //ViewBag.ScheduleList = new List<Schedule>();
+
+            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
@@ -103,12 +115,28 @@ namespace StudentFinder.Controllers
         {
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
-            
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
-            ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
+
+            //var scheduleList = _context.Schedule
+            //    .OrderBy(x => x.FromValue)
+            //    .Select(x => new
+            //    {
+            //        id = x.Id,
+            //        from = x.FromValue,
+            //        to = x.ToValue,
+            //        label = x.Label
+            //    }).ToList();
+
+            //var scheduleLabelList = _context.Schedule.OrderBy(s => s.From).Select(a => new { id = a.Id, label = a.Label }).ToList();
+            ////ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
+            //ViewBag.scheduleLabeList = new SelectList(scheduleLabelList, "id", "value");
+
+            ////var scheduleFromList = _context.Schedule.OrderBy(s => s.From).Select(a => new {  = a.Id, label = a.Label }).ToList();
+
+            ////ViewBag.scheduleFromList = new SelectList(scheduleFromList, "id", "value");
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            ViewBag.scheduleViewBag = scheduleList;
 
             ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
-
 
             return View();
         }
@@ -118,11 +146,12 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student)
+        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, [Bind("id)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(student);
+                //_context.Add()
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -139,6 +168,8 @@ namespace StudentFinder.Controllers
 
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+
+            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
@@ -209,6 +240,17 @@ namespace StudentFinder.Controllers
             _context.Student.Remove(student);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            return View();
         }
 
         private bool StudentExists(int id)
