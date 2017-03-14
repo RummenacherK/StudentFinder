@@ -130,6 +130,8 @@ namespace StudentFinder.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
+
+
         public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student)
         {
             if (ModelState.IsValid)
