@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        <table>
+        @*<table>
             <thead>
                 <tr>
                     <th>Period</th>
@@ -81,11 +81,6 @@
             <tbody>
                 @foreach (var item in scheduleList)
                 {
-                    <tr class="hidden">
-                        <td class="hidden">
-                            @item.Id 
-                        </td>
-                    </tr>
                     <tr>
                         <td>
                             @item.Label
@@ -100,7 +95,6 @@
                             <div class="form-group">
 
                                 <div class="col-md-10">
-                                    @*@Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })*@
                                     @Html.DropDownList("spaceSelectList", spaceList, "None", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                                 </div>
                             </div>
@@ -109,13 +103,13 @@
 
                 }
             </tbody>
-        </table>
+        </table>*@
 
 
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-default"/>
             </div>
         </div>
     </div>
