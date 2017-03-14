@@ -146,13 +146,16 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, [Bind("id)
+        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student/*, [Bind("StudentId, ScheduleId, SpaceId")] StudentScheduleSpace studentschedulespace*/)
         {
             if (ModelState.IsValid)
-            {
+            {                
                 _context.Add(student);
-                //_context.Add()
+                //_context.Add(studentschedulespace);
                 await _context.SaveChangesAsync();
+
+                int id = student.Id;
+
                 return RedirectToAction("Index");
             }
             return View(student);

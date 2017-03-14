@@ -81,6 +81,11 @@
             <tbody>
                 @foreach (var item in scheduleList)
                 {
+                    <tr class="hidden">
+                        <td class="hidden">
+                            @item.Id 
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             @item.Label
@@ -96,7 +101,7 @@
 
                                 <div class="col-md-10">
                                     @*@Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })*@
-                                    @Html.DropDownList("spaceSelectList", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                    @Html.DropDownList("spaceSelectList", spaceList, "None", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                                 </div>
                             </div>
                         </td>
