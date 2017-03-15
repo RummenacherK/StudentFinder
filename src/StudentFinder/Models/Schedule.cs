@@ -12,7 +12,10 @@ namespace StudentFinder.Models
         [Required]
         public int Id { get; set; }
         [Required]
+        public int SchoolId { get; set; }
+        [Required]
         public string Label { get; set; }
+        
         
         public DateTime? From { get; set; }
        
@@ -49,5 +52,6 @@ namespace StudentFinder.Models
 
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }
         //public virtual Schedule Schedules { get; set; }
+        
     }
 }
