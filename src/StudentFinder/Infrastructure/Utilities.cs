@@ -8,8 +8,6 @@ namespace StudentFinder.Infrastructure
 {
     public class Utilities
     {
-        public TimeSpan TimeOfDay { get; }
 
-        
     }
 }

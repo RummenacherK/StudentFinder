@@ -1,13 +1,8 @@
-@model StudentFinder.Models.StudentScheduleSpace
-
-@using StudentFinder.Models
+@model StudentFinder.Models.Student
 
 @{
     ViewData["Title"] = "Create";
     SelectList spaceList = ViewBag.SpaceSelectList;
-    SelectList gradeLevel = ViewBag.gradeLevelSelectList;
-    IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
-    //var superscheduleList = new List<Schedule>();
 
 }
 
@@ -18,56 +13,42 @@
         <h4>Student</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @*<div class="form-group">
-                <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
-                <div class="col-md-10">
-                    <input asp-for="GradeLevel" class="form-control" />
-                    <span asp-validation-for="GradeLevel" class="text-danger" />
-                </div>
-            </div>*@
+        <div class="form-group">
+            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="GradeLevel" class="form-control" />
+                <span asp-validation-for="GradeLevel" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="StudentSchoolId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="StudentSchoolId" class="form-control" />
+                <span asp-validation-for="StudentSchoolId" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="StudentsSchool" class="form-control" />
+                <span asp-validation-for="StudentsSchool" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="fName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="fName" class="form-control" />
+                <span asp-validation-for="fName" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="lName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="lName" class="form-control" />
+                <span asp-validation-for="lName" class="text-danger" />
+            </div>
+        </div>
 
-        <div class="form-group">
-            <label asp-for="Student.GradeLevel" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
-
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Student.StudentSchoolId" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Student.StudentSchoolId" class="form-control" />
-                <span asp-validation-for="Student.StudentSchoolId" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Student.StudentsSchool" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Student.StudentsSchool" class="form-control" />
-                <span asp-validation-for="Student.StudentsSchool" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Student.fName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Student.fName" class="form-control" />
-                <span asp-validation-for="Student.fName" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Student.lName" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Student.lName" class="form-control" />
-                <span asp-validation-for="Student.lName" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Student.IsActive" class="col-md-2 control-label"></label>
-            <div>
-                <input asp-for="Student.IsActive" class="checkbox" />
-                <span asp-validation-for="Student.IsActive" class="text-danger"></span>
-            </div>
-        </div>
 
         @*<table>
             <thead>
