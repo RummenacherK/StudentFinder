@@ -1,8 +1,11 @@
-@model StudentFinder.Models.Student
+@model StudentFinder.ViewModels.StudentCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
     SelectList spaceList = ViewBag.SpaceSelectList;
+    SelectList gradeLevel = ViewBag.gradeLevelSelectList;
+    IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
+    SelectList schoolList = ViewBag.schoolSelectList;
 
 }
 
@@ -13,11 +16,18 @@
         <h4>Student</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
+        @*<div class="form-group">
             <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="GradeLevel" class="form-control" />
                 <span asp-validation-for="GradeLevel" class="text-danger" />
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
+
             </div>
         </div>
         <div class="form-group">
@@ -48,9 +58,7 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
-
-
-        @*<table>
+        <table>
             <thead>
                 <tr>
                     <th>Period</th>
@@ -64,6 +72,14 @@
                 {
                     <tr>
                         <td>
+                            <div class="form-group hidden">
+                                <input asp-for="ScheduleId" class="form-control"/>
+                                @item.Id
+                            </div>
+
+                            
+                        </td>
+                        <td>
                             @item.Label
                         </td>
                         <td>
@@ -76,7 +92,10 @@
                             <div class="form-group">
 
                                 <div class="col-md-10">
-                                    @Html.DropDownList("spaceSelectList", spaceList, "None", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                    
+                                    @Html.LabelFor(model => model.SpaceId)
+                                    <input asp-for="SpaceId" class="form-control"/>
+                                    @Html.DropDownList("spaceSelectList", spaceList, "None", new {@class = "form-control", @style = "width: 16rem; display:inline-block"})
                                 </div>
                             </div>
                         </td>
@@ -84,7 +103,7 @@
 
                 }
             </tbody>
-        </table>*@
+        </table>
 
 
 

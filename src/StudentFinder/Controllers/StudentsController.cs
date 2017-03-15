@@ -10,6 +10,7 @@ using StudentFinder.Models;
 using StudentFinder.ViewModels;
 using StudentFinder.Infrastructure;
 using System.Collections;
+using Microsoft.DotNet.Cli.Utils;
 
 namespace StudentFinder.Controllers
 {
@@ -112,11 +113,11 @@ namespace StudentFinder.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            //var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
-            //ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            //IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
-            //ViewBag.scheduleViewBag = scheduleList;
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            ViewBag.scheduleViewBag = scheduleList;
 
             ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
 
@@ -131,12 +132,28 @@ namespace StudentFinder.Controllers
 
 
 
-        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student)
+        public async Task<IActionResult> Create(
+            [Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, 
+            [Bind("ScheduleId,SpaceId")]StudentScheduleSpace sss)
         {
             if (ModelState.IsValid)
-            {                
+            {
                 _context.Add(student);
                 await _context.SaveChangesAsync();
+                
+                int id = student.Id;
+
+                foreach (var item in sss.Schedule.StudentScheduleSpace)
+                {
+                    _context.StudentScheduleSpace.Add(
+                    new StudentScheduleSpace
+                    {
+                        StudentId = id,
+                        ScheduleId = item.ScheduleId,
+                        SpaceId = item.SpaceId
+                    });
+                }
+
                 return RedirectToAction("Index");
             }
             return View(student);
