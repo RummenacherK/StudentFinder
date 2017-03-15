@@ -21,6 +21,9 @@ namespace StudentFinder.Models
         [Required]
         public string Description { get; set; }
 
+        [Required]
+        public int SchoolId { get; set; }
+
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }
         //public virtual Space Spaces { get; set; }
 
