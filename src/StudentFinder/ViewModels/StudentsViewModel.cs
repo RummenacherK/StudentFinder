@@ -12,9 +12,15 @@ namespace StudentFinder.ViewModels
         public int StudentId { get; set; }
         public string fName { get; set; }
         public string lName { get; set; }
-        public string GradeLevel { get; set; }
+        public int GradeLevelId { get; set; }
         public string StudentSchoolId { get; set; }
+        public bool IsActive { get; set; }
+
+        //School global Identifier
+        public int StudentsSchool { get; set; }
         
+        //Schedule Id
+        public int ScheduleId { get; set; }
 
         //Space Info
         public int SpaceId { get; set; }

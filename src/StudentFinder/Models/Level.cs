@@ -9,5 +9,7 @@ namespace StudentFinder.Models
     {
         public int Id { get; set; }
         public string GradeLevel { get; set; }
+
+        public ICollection<Student> Student { get; set; }
     }
 }

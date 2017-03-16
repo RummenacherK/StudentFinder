@@ -1,4 +1,4 @@
-@model StudentFinder.ViewModels.StudentCreateViewModel
+@model StudentFinder.ViewModels.StudentsViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -24,7 +24,7 @@
             </div>
         </div>*@
         <div class="form-group">
-            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <label asp-for="GradeLevelId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
 

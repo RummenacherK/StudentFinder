@@ -74,7 +74,7 @@ namespace StudentFinder.Controllers
                 StudentId = s.Student.Id,
                 fName = s.Student.fName,
                 lName = s.Student.lName,
-                GradeLevel = s.Student.GradeLevel,
+                GradeLevelId = s.Student.GradeLevelId,
                 SpaceId = s.Space.Id,
                 Room = s.Space.Room,
                 Location = s.Space.Location,
@@ -288,7 +288,7 @@ namespace StudentFinder.Controllers
                 StudentId = s.Student.Id,
                 fName = s.Student.fName,
                 lName = s.Student.lName,
-                GradeLevel = s.Student.GradeLevel,
+                GradeLevelId = s.Student.GradeLevelId,
                 SpaceId = s.Space.Id,
                 Room = s.Space.Room,
                 Location = s.Space.Location
