@@ -51,11 +51,10 @@ namespace StudentFinder.Controllers
         }
 
         // POST Create Period
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FromValue,From,Label,ToValue,To")] Schedule schedule)
+        public async Task<IActionResult> Create([Bind("Id,SchoolId,Label,FromHh,FromMm,ToHh,ToMm")] Schedule schedule)
         {
             // if (ModelState.IsValid)
            // {
@@ -83,11 +82,10 @@ namespace StudentFinder.Controllers
         }
 
         // POST Edit Period
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,From,Label,To")] Schedule schedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SchoolId,Label,FromHh,FromMm,ToHh,ToMm")] Schedule schedule)
         {
             if (id != schedule.Id)
             {

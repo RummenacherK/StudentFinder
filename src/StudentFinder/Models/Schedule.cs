@@ -15,12 +15,20 @@ namespace StudentFinder.Models
         public int SchoolId { get; set; }
         [Required]
         public string Label { get; set; }
-        
-        
-        public DateTime? From { get; set; }
-       
         [Required]
-        [RegularExpression(@"^([1-9]|0[1-9]|1[0-2]):[0-5][0-9](am|pm|AM|PM)$", ErrorMessage = "Invalid Time.")]
+        [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
+        public int FromHh { get; set; }
+        [Required]
+        [RegularExpression(@"^[0-5][0-9]$", ErrorMessage = "Invalid Time.")]
+        public int FromMm { get; set; }
+        [Required]
+        [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
+        public int ToHh { get; set; }
+        [Required]
+        [RegularExpression(@"^[0-5][0-9]$", ErrorMessage = "Invalid Time.")]
+        public int ToMm { get; set; }
+
+        /*
         public string FromValue
         {
             get
@@ -49,6 +57,7 @@ namespace StudentFinder.Models
                 To = DateTime.Parse(value);
             }
         }
+        */
 
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }
         //public virtual Schedule Schedules { get; set; }
