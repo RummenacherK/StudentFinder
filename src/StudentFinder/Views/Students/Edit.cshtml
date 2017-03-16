@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Edit";
+    SelectList spaceList = ViewBag.SpaceSelectList;
+    SelectList gradeLevel = ViewBag.gradeLevelSelectList;
+    IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
+    SelectList schoolList = ViewBag.schoolSelectList;
 }
 
 <h2>Edit</h2>
@@ -15,8 +19,8 @@
         <div class="form-group">
             <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="GradeLevel" class="form-control" />
-                <span asp-validation-for="GradeLevel" class="text-danger" />
+                @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
+
             </div>
         </div>
         <div class="form-group">
@@ -26,11 +30,18 @@
                 <span asp-validation-for="StudentSchoolId" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
+        @*<div class="form-group">
             <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="StudentsSchool" class="form-control" />
                 <span asp-validation-for="StudentsSchool" class="text-danger" />
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.DropDownList("schoolList", schoolList, new { @class = "form-control" })
+
             </div>
         </div>
         <div class="form-group">
@@ -47,6 +58,42 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Room</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in scheduleList)
+                {
+                    <tr>
+                        <td>
+                            @item.Label
+                        </td>
+                        <td>
+                            @item.FromValue
+                        </td>
+                        <td>
+                            @item.ToValue
+                        </td>
+                        <td>
+                            <div class="form-group">
+
+                                <div class="col-md-10">
+                                    @Html.DropDownList("spaceSelectList", spaceList, "None", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+        
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

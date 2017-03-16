@@ -48,9 +48,49 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
+
+
+        @*<table>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Room</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in scheduleList)
+                {
+                    <tr>
+                        <td>
+                            @item.Label
+                        </td>
+                        <td>
+                            @item.FromValue
+                        </td>
+                        <td>
+                            @item.ToValue
+                        </td>
+                        <td>
+                            <div class="form-group">
+
+                                <div class="col-md-10">
+                                    @Html.DropDownList("spaceSelectList", spaceList, "None", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>*@
+
+
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-default"/>
             </div>
         </div>
     </div>
