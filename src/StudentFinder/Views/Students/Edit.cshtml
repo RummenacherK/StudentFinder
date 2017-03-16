@@ -17,7 +17,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
-            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <label asp-for="GradeLevelId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
 
@@ -98,7 +98,7 @@
                     </td>
                     <td>
                         <form asp-action="EditSchedule">
-                            <input type="hidden" id=""
+                            @*<input type="hidden" id="" />*@
                             <input type="submit" value="Save" class="btn btn-default" />
                             
                         </form>

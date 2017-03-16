@@ -74,11 +74,13 @@ namespace StudentFinder.Controllers
                 StudentId = s.Student.Id,
                 fName = s.Student.fName,
                 lName = s.Student.lName,
-                GradeLevelId = s.Student.GradeLevelId,
+                GradeLevelId = s.Student.Level.Id,
                 SpaceId = s.Space.Id,
                 Room = s.Space.Room,
                 Location = s.Space.Location,
-                StudentSchoolId = s.Student.StudentSchoolId
+                StudentSchoolId = s.Student.StudentSchoolId,
+                GradeLevel = s.Student.Level.GradeLevel
+
             });
 
             int pageSize = 25;
@@ -136,8 +138,8 @@ namespace StudentFinder.Controllers
 
 
         public async Task<IActionResult> Create(
-            [Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, 
-            [Bind("ScheduleId,SpaceId")]StudentScheduleSpace sss)
+            [Bind("Id,GradeLevelId,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, 
+            [Bind("ScheduleId,spaceId")]StudentScheduleSpace sss)
         {
             if (ModelState.IsValid)
             {
@@ -152,8 +154,8 @@ namespace StudentFinder.Controllers
                     new StudentScheduleSpace
                     {
                         StudentId = id,
-                        ScheduleId = item.ScheduleId,
-                        SpaceId = item.SpaceId
+                        ScheduleId = sss.ScheduleId,
+                        SpaceId = sss.SpaceId
                     });
                 }
 
