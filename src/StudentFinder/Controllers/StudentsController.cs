@@ -35,7 +35,8 @@ namespace StudentFinder.Controllers
             var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
            
             ViewBag.searchString = searchString;
 
@@ -99,7 +100,8 @@ namespace StudentFinder.Controllers
             var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
@@ -119,7 +121,8 @@ namespace StudentFinder.Controllers
             IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             return View();
         }
@@ -175,7 +178,8 @@ namespace StudentFinder.Controllers
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
             ViewBag.schoolSelectList = new SelectList(schoolList, "id", "value");
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
