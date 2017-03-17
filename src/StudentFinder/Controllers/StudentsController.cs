@@ -32,7 +32,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
+            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.FromHh, value2 = a.ToHh }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
@@ -99,7 +99,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
+            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.FromHh, value2 = a.ToHh }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
@@ -120,7 +120,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
@@ -168,7 +168,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
