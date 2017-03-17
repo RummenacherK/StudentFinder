@@ -97,7 +97,6 @@ namespace StudentFinder.Controllers
 
             var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.FromHh, value2 = a.ToHh }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
-            //ViewBag.ScheduleList = new List<Schedule>();
 
             ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
 
@@ -113,8 +112,9 @@ namespace StudentFinder.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
-            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+            //var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            //ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+
 
             IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
             ViewBag.scheduleViewBag = scheduleList;
@@ -232,7 +232,20 @@ namespace StudentFinder.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost, ActionName("EditSchedule")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSchedule(int newScheduleId, int newStudentId, int newSpaceId)
+        {
+            StudentScheduleSpace newSchedule = new StudentScheduleSpace();
+            newSchedule.ScheduleId = newScheduleId;
+            newSchedule.StudentId = newStudentId;
+            newSchedule.SpaceId = newSpaceId;
 
+            _context.StudentScheduleSpace.Add(newSchedule);
+            await _context.SaveChangesAsync();
+                            
+            return RedirectToAction("Index");
+        }
         public IActionResult About()
         {
             return View();
@@ -262,5 +275,6 @@ namespace StudentFinder.Controllers
             });
 
         }
+
     }
 }
