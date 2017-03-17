@@ -9,28 +9,30 @@ namespace StudentFinder.Infrastructure
 {
     public static class GradeLevelsDropDown
     {
-        public static IList<SelectListItem> GetGradeLevel()
-        {
-            IList<SelectListItem> _result = new List<SelectListItem>();
-
-            _result.Add(new SelectListItem {Text="Pre-Kindergarden", Value="1", });
-            _result.Add(new SelectListItem {Text="Kindergarden", Value="2", });
-            _result.Add(new SelectListItem {Text="1st", Value="3", });
-            _result.Add(new SelectListItem {Text = "2nd", Value = "4",});
-            _result.Add(new SelectListItem {Text="3rd", Value="5",  });
-            _result.Add(new SelectListItem {Text="4th", Value="6",  });
-            _result.Add(new SelectListItem {Text="5th", Value="7", });
-            _result.Add(new SelectListItem {Text="6th", Value="8", });
-            _result.Add(new SelectListItem {Text="7th", Value="9", });
-            _result.Add(new SelectListItem {Text="8th", Value="10",});
-            _result.Add(new SelectListItem {Text="9th", Value="11",});
-            _result.Add(new SelectListItem {Text="10th", Value="12",});
-            _result.Add(new SelectListItem {Text="11th", Value="13",});
-            _result.Add(new SelectListItem {Text="12th", Value="14", });
+        //public static IList<SelectListItem> GetGradeLevel()
+        //{
 
 
-            return _result;
-        }
+        //    IList<SelectListItem> _result = new List<SelectListItem>();
+
+        //    _result.Add(new SelectListItem { Text = "Pre-Kindergarden", Value = "1", });
+        //    _result.Add(new SelectListItem { Text = "Kindergarden", Value = "2", });
+        //    _result.Add(new SelectListItem { Text = "1st", Value = "3", });
+        //    _result.Add(new SelectListItem { Text = "2nd", Value = "4", });
+        //    _result.Add(new SelectListItem { Text = "3rd", Value = "5", });
+        //    _result.Add(new SelectListItem { Text = "4th", Value = "6", });
+        //    _result.Add(new SelectListItem { Text = "5th", Value = "7", });
+        //    _result.Add(new SelectListItem { Text = "6th", Value = "8", });
+        //    _result.Add(new SelectListItem { Text = "7th", Value = "9", });
+        //    _result.Add(new SelectListItem { Text = "8th", Value = "10", });
+        //    _result.Add(new SelectListItem { Text = "9th", Value = "11", });
+        //    _result.Add(new SelectListItem { Text = "10th", Value = "12", });
+        //    _result.Add(new SelectListItem { Text = "11th", Value = "13", });
+        //    _result.Add(new SelectListItem { Text = "12th", Value = "14", });
+
+
+        //    return _result;
+        //}
 
 
         //public static IEnumerable<SelectList> GetGradeDropDown(object selectedGrade)

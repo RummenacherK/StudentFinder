@@ -8,9 +8,10 @@ using StudentFinder.Data;
 namespace StudentFinder.Migrations
 {
     [DbContext(typeof(StudentFinderContext))]
-    partial class StudentFinderContextModelSnapshot : ModelSnapshot
+    [Migration("20170316170115_UpdatedVirtualstoLevelsandStudent")]
+    partial class UpdatedVirtualstoLevelsandStudent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -33,14 +34,20 @@ namespace StudentFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("From");
+                    b.Property<DateTime?>("From");
+
+                    b.Property<string>("FromValue")
+                        .IsRequired();
 
                     b.Property<string>("Label")
                         .IsRequired();
 
                     b.Property<int>("SchoolId");
 
-                    b.Property<int>("To");
+                    b.Property<DateTime?>("To");
+
+                    b.Property<string>("ToValue")
+                        .IsRequired();
 
                     b.HasKey("Id");
 

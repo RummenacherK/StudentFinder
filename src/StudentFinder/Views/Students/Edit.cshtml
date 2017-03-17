@@ -17,7 +17,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
-            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <label asp-for="GradeLevelId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
 
@@ -79,26 +79,29 @@
         @foreach (var item in scheduleList)
         {
                 <tr>
+                    <td class="hidden">
+                        <input type="hidden" name="scheduleIdList" value="@item.Id" />
+                    </td>
                     <td>
                         @item.Label
                     </td>
                     <td>
-                        @item.FromValue
+                        @item.From
                     </td>
                     <td>
-                        @item.ToValue
+                        @item.To
                     </td>
                     <td>
                         <div class="form-group">
 
                             <div class="col-md-10">
-                                @Html.DropDownList("spaceSelectList", spaceList, "1", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                @Html.DropDownList("spaceIdList", spaceList, "1", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                             </div>
                         </div>
                     </td>
                     <td>
                         <form asp-action="EditSchedule">
-                            <input type="hidden" id=""
+                            @*<input type="hidden" id="" />*@
                             <input type="submit" value="Save" class="btn btn-default" />
                             
                         </form>

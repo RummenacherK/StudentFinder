@@ -10,6 +10,7 @@ using StudentFinder.Models;
 using StudentFinder.ViewModels;
 using StudentFinder.Infrastructure;
 using System.Collections;
+using Microsoft.DotNet.Cli.Utils;
 
 namespace StudentFinder.Controllers
 {
@@ -34,7 +35,8 @@ namespace StudentFinder.Controllers
             var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
            
             ViewBag.searchString = searchString;
 
@@ -43,7 +45,7 @@ namespace StudentFinder.Controllers
             
             var student = new Student();
             var today = DateTime.Now;
-            var periodId = StudentFinder.Infrastructure.Utilities.CompareTimes(today);
+            //var periodId = Utilities.CompareTimes(today);
 
             //Select only Active Students       
             var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true).Select(x => x);
@@ -72,11 +74,13 @@ namespace StudentFinder.Controllers
                 StudentId = s.Student.Id,
                 fName = s.Student.fName,
                 lName = s.Student.lName,
-                GradeLevel = s.Student.GradeLevel,
+                GradeLevelId = s.Student.Level.Id,
                 SpaceId = s.Space.Id,
                 Room = s.Space.Room,
                 Location = s.Space.Location,
-                StudentSchoolId = s.Student.StudentSchoolId
+                StudentSchoolId = s.Student.StudentSchoolId,
+                GradeLevel = s.Student.Level.GradeLevel
+
             });
 
             int pageSize = 25;
@@ -98,7 +102,8 @@ namespace StudentFinder.Controllers
             var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
@@ -112,14 +117,14 @@ namespace StudentFinder.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            //var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
-            //ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
-
-
+            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+            
             IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             return View();
         }
@@ -132,40 +137,93 @@ namespace StudentFinder.Controllers
 
 
 
-        public async Task<IActionResult> Create([Bind("Id,GradeLevel,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student)
+        public async Task<IActionResult> Create(
+            [Bind("Id,GradeLevelId,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, 
+            int[] scheduleIdList, 
+            params int [] spaceIdList)
         {
+            //Add error handling for scheduleId and SpaceId
+
             if (ModelState.IsValid)
-            {                
+            {
                 _context.Add(student);
                 await _context.SaveChangesAsync();
+                
+                int studentId = student.Id;
+
+                SetStudentSchedule(studentId, scheduleIdList, spaceIdList);
+                
                 return RedirectToAction("Index");
             }
             return View(student);
         }
 
         // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
-            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+                       
+            var studentSchedule = GetStudentSchedule(id).ToList();
+            //IEnumerable<SelectList> scheduleList;
+            //foreach to lists for schedule id's and space ids
+            
+            var scheduleSelectList = from v in studentSchedule
+                       from c in _context.Schedule
+                       where v.ScheduleId == c.Id
+                       select new SelectListItem { Value = v.ScheduleId.ToString(), Text = c.Label };
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
-            ViewBag.scheduleViewBag = scheduleList;
+            ViewBag.scheduleViewBag = scheduleSelectList;
+
+            
+            var spaceSelectList = from v in studentSchedule
+                                  from c in _context.Space
+                                  where v.SpaceId == c.Id
+                                  select new SelectListItem { Value = v.SpaceId.ToString(), Text = c.Room };
+
+            ViewBag.SpaceSelectList = spaceSelectList;
+
+            //-----
+            //var i = 0;
+            //foreach (var sch_entry in studentSchedule)
+            //{
+            //    var test = studentSchedule.Select( ((r, index) => new SelectListItem { Text = schedule.Label, Value = studentSchedule.Where(x => x.Schedule.Id == studentSchedule[i]);
+            //    i++;
+            //}
+
+
+            //foreach(var sch_entry in studentSchedule)
+            //{
+
+            //    //how to build a select list from another list
+            //    var scheduleList = _context.Schedule.Where() sch_entry.Schedule.Label  ScheduleId;
+            //    var test = sch_entry
+            //}
+
+            //-------
+            //var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            //ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+
+
+            //IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+
+            //ViewBag.scheduleViewBag = scheduleList;
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
             ViewBag.schoolSelectList = new SelectList(schoolList, "id", "value");
 
-            ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
+            var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
+
             if (student == null)
             {
                 return NotFound();
             }
+
             return View(student);
         }
 
@@ -174,9 +232,12 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,GradeLevel,StudentId,StudentsSchool,fName,lName")] Student student) 
+        public async Task<IActionResult> Edit([Bind("Id,GradeLevelId,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student,
+            int[] scheduleIdList,
+            params int[] spaceIdList) 
         {
-            if (id != student.Id)
+            var editStudent = _context.Student.Select(x => x.Id == student.Id);
+            if (!editStudent.Any())
             {
                 return NotFound();
             }
@@ -187,6 +248,11 @@ namespace StudentFinder.Controllers
                 {
                     _context.Update(student);
                     await _context.SaveChangesAsync();
+
+                    int studentId = student.Id;
+
+                    SetStudentSchedule(studentId, scheduleIdList, spaceIdList);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -268,12 +334,53 @@ namespace StudentFinder.Controllers
                 StudentId = s.Student.Id,
                 fName = s.Student.fName,
                 lName = s.Student.lName,
-                GradeLevel = s.Student.GradeLevel,
+                GradeLevelId = s.Student.GradeLevelId,
                 SpaceId = s.Space.Id,
                 Room = s.Space.Room,
                 Location = s.Space.Location
             });
 
+        }
+
+        public List<StudentScheduleSpace> GetStudentSchedule(int Id)
+        {
+            var studentSchedule = _context.StudentScheduleSpace.Where(x => x.StudentId == Id).Select(x => x).ToList();
+
+            return studentSchedule;
+        }
+
+        public void SetStudentSchedule(int studentId, int[] scheduleIdList, int[] spaceIdList)
+        {
+           
+            var student_schedule = GetStudentSchedule(studentId);
+
+            if (student_schedule.Any())
+            {
+
+
+                foreach (var row in student_schedule)
+                {
+                    _context.StudentScheduleSpace.Remove(row);
+                }
+
+                _context.SaveChangesAsync();
+            }
+
+            int i = 0;            
+            foreach (var item in scheduleIdList)
+            {
+                _context.StudentScheduleSpace.Add(
+                   new StudentScheduleSpace
+                   {
+                       StudentId = studentId,
+                       ScheduleId = scheduleIdList[i],
+                       SpaceId = spaceIdList[i]
+                   });
+                i++;
+            }
+
+            _context.SaveChangesAsync();
+            
         }
 
     }
