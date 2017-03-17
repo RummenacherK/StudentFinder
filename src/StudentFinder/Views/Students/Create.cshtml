@@ -91,7 +91,7 @@
                         
 
                         <td class="hidden">
-                            <input type="hidden" name="ScheduleId" value="@ViewBag.scheduleViewBag" />
+                            <input type="hidden" name="scheduleIdList" value="@item.Id" />
                         </td>
                         <td>
                             @item.Label 
@@ -106,7 +106,7 @@
                             <div class="form-group">
 
                                 <div class="dropdown">            
-                                    @Html.DropDownList("spaceId", spaceList, "None", new {spaceId = spaceList.SelectedValues, @class = "form-control", @style = "width: 16rem; display:inline-block"})
+                                    @Html.DropDownList("spaceIdList", spaceList, "None", new {spaceId = spaceList.SelectedValues, @class = "form-control", @style = "width: 16rem; display:inline-block"})
                                 </div>
                             </div>
                         </td>

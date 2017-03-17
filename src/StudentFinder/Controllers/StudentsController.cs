@@ -139,26 +139,20 @@ namespace StudentFinder.Controllers
 
         public async Task<IActionResult> Create(
             [Bind("Id,GradeLevelId,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student, 
-            [Bind("ScheduleId,spaceId")]StudentScheduleSpace sss)
+            int[] scheduleIdList, 
+            params int [] spaceIdList)
         {
+            //Add error handling for scheduleId and SpaceId
+
             if (ModelState.IsValid)
             {
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 
-                int id = student.Id;
+                int studentId = student.Id;
 
-                foreach (var item in sss.Schedule.StudentScheduleSpace)
-                {
-                    _context.StudentScheduleSpace.Add(
-                    new StudentScheduleSpace
-                    {
-                        StudentId = id,
-                        ScheduleId = sss.ScheduleId,
-                        SpaceId = sss.SpaceId
-                    });
-                }
-
+                SetStudentSchedule(studentId, scheduleIdList, spaceIdList);
+                
                 return RedirectToAction("Index");
             }
             return View(student);
@@ -296,6 +290,47 @@ namespace StudentFinder.Controllers
                 Location = s.Space.Location
             });
 
+        }
+
+        public List<StudentScheduleSpace> GetStudentSchedule(int Id)
+        {
+            var studentSchedule = _context.StudentScheduleSpace.Where(x => x.StudentId == Id).Select(x => x).ToList();
+
+            return studentSchedule;
+        }
+
+        public void SetStudentSchedule(int studentId, int[] scheduleIdList, int[] spaceIdList)
+        {
+           
+            var student_schedule = GetStudentSchedule(studentId);
+
+            if (student_schedule.Any())
+            {
+
+
+                foreach (var row in student_schedule)
+                {
+                    _context.StudentScheduleSpace.Remove(row);
+                }
+
+                _context.SaveChangesAsync();
+            }
+
+            int i = 0;            
+            foreach (var item in scheduleIdList)
+            {
+                _context.StudentScheduleSpace.Add(
+                   new StudentScheduleSpace
+                   {
+                       StudentId = studentId,
+                       ScheduleId = scheduleIdList[i],
+                       SpaceId = spaceIdList[i]
+                   });
+                i++;
+            }
+
+            _context.SaveChangesAsync();
+            
         }
 
     }
