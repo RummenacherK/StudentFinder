@@ -16,17 +16,13 @@ namespace StudentFinder.Models
         [Required]
         public string Label { get; set; }
         [Required]
-        [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
-        public int FromHh { get; set; }
+        //  [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
+        public int From { get; set; }
+       
         [Required]
-        [RegularExpression(@"^[0-5][0-9]$", ErrorMessage = "Invalid Time.")]
-        public int FromMm { get; set; }
-        [Required]
-        [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
-        public int ToHh { get; set; }
-        [Required]
-        [RegularExpression(@"^[0-5][0-9]$", ErrorMessage = "Invalid Time.")]
-        public int ToMm { get; set; }
+        //  [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
+        public int To { get; set; }
+       
 
         /*
         public string FromValue
