@@ -45,7 +45,7 @@ namespace StudentFinder.Controllers
             
             var student = new Student();
             var today = DateTime.Now;
-            var periodId = StudentFinder.Infrastructure.Utilities.CompareTimes(today);
+            //var periodId = Utilities.CompareTimes(today);
 
             //Select only Active Students       
             var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true).Select(x => x);
