@@ -23,14 +23,24 @@ namespace StudentFinder.Controllers
 
         public StudentsController(StudentFinderContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         // GET: Students
         public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0, int schoolId = 1)
         {
-            
 
+            //We need to get the ID of the user's school before we can show the specific schedule for them
+
+
+
+        //    private ApplicationUser GetCurrentUser(ApplicationDbContext context)
+        //{
+        //    var identity = User.Identity as ClaimsIdentity;
+        //    Claim identityClaim = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        //    return context.Users.FirstOrDefault(u => u.SchoolId.ToString() == identityClaim.Value);
+        //}
+    
             //var identity = (ClaimsIdentity) User.Identity;
             //IEnumerable<Claim> claims = identity.Claims;
 
@@ -50,25 +60,31 @@ namespace StudentFinder.Controllers
            
             ViewBag.searchString = searchString;
 
-
+            //ANDREW:  PUT YOUR CODE HERE!
             //IQueryable<StudentsViewModel> studentsVM;
-            
+
             //var student = new Student();
             //var today = DateTime.Now;
             //var periodId = Utilities.CompareTimes(today);
+            var currentPeriod = 20; //This will need to be updated from Andrew's code
+
+            //END:  ANDREW SECTION
+
+
 
             //Select only Active Students       
             var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true).Select(x => x);
 
             //Select only students that have the current schoolId
-            var s_all = activeStudents.Where(s => s.Student.StudentsSchool == s.Schedule.SchoolId ).Select(x => x);
+            var currentStudents = activeStudents.Where(s => s.Student.StudentsSchool == schoolId ).Select(x => x);
 
+            //Select entry on SSS table which matches the current time Period
+            var s_all = currentStudents.Where(s => s.ScheduleId == currentPeriod).Select(x => x);
+        
 
             //Old s_all code
             //var s_all = _context.StudentScheduleSpace.Where(s => s.ScheduleId == some_ID).Select(x => x);
-
-
-
+            
             if (spaceListFilter > 0)
             {
                 s_all = s_all.Where(s => s.SpaceId == spaceListFilter);
@@ -82,13 +98,15 @@ namespace StudentFinder.Controllers
             var selectedStudents = s_all.Select(s => new StudentsViewModel()
             {
                 StudentId = s.Student.Id,
+                StudentsSchool = s.Student.StudentsSchool,
+                StudentSchoolId = s.Student.StudentSchoolId,
                 fName = s.Student.fName,
                 lName = s.Student.lName,
-                GradeLevelId = s.Student.Level.Id,
+                GradeLevelId = s.Student.GradeLevelId,
+                IsActive = s.Student.IsActive,
                 SpaceId = s.Space.Id,
                 Room = s.Space.Room,
                 Location = s.Space.Location,
-                StudentSchoolId = s.Student.StudentSchoolId,
                 GradeLevel = s.Student.Level.GradeLevel
 
             });
@@ -178,16 +196,18 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
                        
-            var studentSchedule = GetStudentSchedule(id).ToList();
-            //IEnumerable<SelectList> scheduleList;
-            //foreach to lists for schedule id's and space ids
+            IEnumerable<StudentScheduleSpace> studentSchedule = GetStudentSchedule(id).ToList();
             
-            var scheduleSelectList = from v in studentSchedule
-                       from c in _context.Schedule
-                       where v.ScheduleId == c.Id
-                       select new SelectListItem { Value = v.ScheduleId.ToString(), Text = c.Label };
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            ViewBag.scheduleViewBag = scheduleList;
 
-            ViewBag.scheduleViewBag = scheduleSelectList;
+            //var scheduleSelectList = from v in studentSchedule
+            //                         from c in _context.Schedule
+            //                         where v.ScheduleId == c.Id
+            //                         select new SelectListItem { Value = v.ScheduleId.ToString(), Text = c.Label };
+            //var scheduleCollection = scheduleSelectList.Select(x => new { Text = x.Text, Value = x.Value }).ToList();
+
+            //ViewBag.scheduleViewBag = new SelectList(scheduleCollection, "Value", "Text");
 
             
             var spaceSelectList = from v in studentSchedule
@@ -196,6 +216,9 @@ namespace StudentFinder.Controllers
                                   select new SelectListItem { Value = v.SpaceId.ToString(), Text = c.Room };
 
             ViewBag.SpaceSelectList = spaceSelectList;
+            //IEnumerable < SelectListItem > spaceCollection = spaceSelectList.AsEnumerable();
+            //ViewBag.SpaceSelectList = spaceSelectList;
+
 
             //-----
             //var i = 0;

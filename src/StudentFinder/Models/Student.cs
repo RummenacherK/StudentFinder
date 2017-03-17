@@ -32,6 +32,7 @@ namespace StudentFinder.Models
         public bool IsActive { get; set; }
 
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }
+
         public virtual Level Level { get; set; }
 
     }
