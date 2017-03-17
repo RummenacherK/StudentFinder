@@ -10,7 +10,10 @@ using StudentFinder.Models;
 using StudentFinder.ViewModels;
 using StudentFinder.Infrastructure;
 using System.Collections;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Cli.Utils;
+using NuGet.Versioning;
 
 namespace StudentFinder.Controllers
 {
@@ -24,9 +27,16 @@ namespace StudentFinder.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0 /*int some_ID = 0*/)
+        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0, int schoolId = 1)
         {
+            
 
+            //var identity = (ClaimsIdentity) User.Identity;
+            //IEnumerable<Claim> claims = identity.Claims;
+
+            //var test = identity.FindFirst(ClaimTypes.Role).Value;
+            //var test2 = identity.FindFirst("SchoolId");
+            
             //var spaceSort = _context.StudentScheduleSpace.OrderBy(c => c. Space.Id).Select(a => new { id = a.i})
 
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
@@ -43,15 +53,15 @@ namespace StudentFinder.Controllers
 
             //IQueryable<StudentsViewModel> studentsVM;
             
-            var student = new Student();
-            var today = DateTime.Now;
+            //var student = new Student();
+            //var today = DateTime.Now;
             //var periodId = Utilities.CompareTimes(today);
 
             //Select only Active Students       
             var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true).Select(x => x);
 
-            //Select only students that have the current schedule Id
-            var s_all = activeStudents.Where(s => s.ScheduleId == s.ScheduleId).Select(x => x);
+            //Select only students that have the current schoolId
+            var s_all = activeStudents.Where(s => s.Student.StudentsSchool == s.Schedule.SchoolId ).Select(x => x);
 
 
             //Old s_all code
@@ -155,7 +165,9 @@ namespace StudentFinder.Controllers
                 
                 return RedirectToAction("Index");
             }
-            return View(student);
+
+            //add data back to view so if something goes wrong user doesnt have to reenter it
+            return View();
         }
 
         // GET: Students/Edit/5
