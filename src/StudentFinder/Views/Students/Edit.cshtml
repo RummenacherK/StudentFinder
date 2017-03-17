@@ -15,7 +15,7 @@
         <h4>Student</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -31,12 +31,12 @@
             </div>
         </div>
         @*<div class="form-group">
-            <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="StudentsSchool" class="form-control" />
-                <span asp-validation-for="StudentsSchool" class="text-danger" />
-            </div>
-        </div>*@
+                <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="StudentsSchool" class="form-control" />
+                    <span asp-validation-for="StudentsSchool" class="text-danger" />
+                </div>
+            </div>*@
         <div class="form-group">
             <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -58,42 +58,7 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Period</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Room</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in scheduleList)
-                {
-                    <tr>
-                        <td>
-                            @item.Label
-                        </td>
-                        <td>
-                            @item.FromValue
-                        </td>
-                        <td>
-                            @item.ToValue
-                        </td>
-                        <td>
-                            <div class="form-group">
 
-                                <div class="col-md-10">
-                                    @Html.DropDownList("spaceSelectList", spaceList, "None", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-
-                }
-            </tbody>
-        </table>
-        
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
@@ -101,11 +66,53 @@
         </div>
     </div>
 </form>
+<table>
+    <thead>
+        <tr>
+            <th>Period</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Room</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in scheduleList)
+        {
+                <tr>
+                    <td>
+                        @item.Label
+                    </td>
+                    <td>
+                        @item.FromValue
+                    </td>
+                    <td>
+                        @item.ToValue
+                    </td>
+                    <td>
+                        <div class="form-group">
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+                            <div class="col-md-10">
+                                @Html.DropDownList("spaceSelectList", spaceList, "1", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form asp-action="EditSchedule">
+                            <input type="hidden" id=""
+                            <input type="submit" value="Save" class="btn btn-default" />
+                            
+                        </form>
+                        </td>
+                </tr>
+                }
+        </tbody>
+    </table>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }
