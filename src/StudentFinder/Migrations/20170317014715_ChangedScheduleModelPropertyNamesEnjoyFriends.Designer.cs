@@ -8,9 +8,10 @@ using StudentFinder.Data;
 namespace StudentFinder.Migrations
 {
     [DbContext(typeof(StudentFinderContext))]
-    partial class StudentFinderContextModelSnapshot : ModelSnapshot
+    [Migration("20170317014715_ChangedScheduleModelPropertyNamesEnjoyFriends")]
+    partial class ChangedScheduleModelPropertyNamesEnjoyFriends
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")

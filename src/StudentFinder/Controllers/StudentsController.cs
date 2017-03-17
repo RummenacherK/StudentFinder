@@ -31,7 +31,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.FromHh, value2 = a.ToHh }).ToList();
+            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
             ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
@@ -42,14 +42,14 @@ namespace StudentFinder.Controllers
             //IQueryable<StudentsViewModel> studentsVM;
             
             var student = new Student();
-                                       
-            var some_ID = 20;
+            var today = DateTime.Now;
+            var periodId = StudentFinder.Infrastructure.Utilities.CompareTimes(today);
 
             //Select only Active Students       
             var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true).Select(x => x);
 
             //Select only students that have the current schedule Id
-            var s_all = activeStudents.Where(s => s.ScheduleId == some_ID).Select(x => x);
+            var s_all = activeStudents.Where(s => s.ScheduleId == s.ScheduleId).Select(x => x);
 
 
             //Old s_all code
@@ -95,7 +95,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.FromHh, value2 = a.ToHh }).ToList();
+            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
             //ViewBag.ScheduleList = new List<Schedule>();
 
@@ -116,7 +116,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
             ViewBag.gradeLevelSelectList = new SelectList(GradeLevelsDropDown.GetGradeLevel(), "Value", "Text");
@@ -153,7 +153,7 @@ namespace StudentFinder.Controllers
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
+            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
