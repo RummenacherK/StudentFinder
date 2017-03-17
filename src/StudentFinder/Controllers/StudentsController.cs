@@ -159,16 +159,46 @@ namespace StudentFinder.Controllers
         }
 
         // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+                       
+            var studentSchedule = GetStudentSchedule(id).ToList();
+            //IEnumerable<SelectList> scheduleList;
+            //foreach to lists for schedule id's and space ids
+            
+            var scheduleSelectList = from v in studentSchedule
+                       from c in _context.Schedule
+                       where v.ScheduleId == c.Id
+                       select new SelectListItem { Value = v.ScheduleId.ToString(), Text = c.Label };
+
+
+
+            //-----
+            //var i = 0;
+            //foreach (var sch_entry in studentSchedule)
+            //{
+            //    var test = studentSchedule.Select( ((r, index) => new SelectListItem { Text = schedule.Label, Value = studentSchedule.Where(x => x.Schedule.Id == studentSchedule[i]);
+            //    i++;
+            //}
+
+
+            //foreach(var sch_entry in studentSchedule)
+            //{
+
+            //    //how to build a select list from another list
+            //    var scheduleList = _context.Schedule.Where() sch_entry.Schedule.Label  ScheduleId;
+            //    var test = sch_entry
+            //}
+
+            //-------
+            //var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
+            //IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.FromHh).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
@@ -178,10 +208,12 @@ namespace StudentFinder.Controllers
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
+
             if (student == null)
             {
                 return NotFound();
             }
+
             return View(student);
         }
 
@@ -190,9 +222,12 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,GradeLevel,StudentId,StudentsSchool,fName,lName")] Student student) 
+        public async Task<IActionResult> Edit([Bind("Id,GradeLevelId,StudentSchoolId,StudentsSchool,fName,lName,IsActive")] Student student,
+            int[] scheduleIdList,
+            params int[] spaceIdList) 
         {
-            if (id != student.Id)
+            var editStudent = _context.Student.Select(x => x.Id == student.Id);
+            if (!editStudent.Any())
             {
                 return NotFound();
             }
@@ -203,6 +238,11 @@ namespace StudentFinder.Controllers
                 {
                     _context.Update(student);
                     await _context.SaveChangesAsync();
+
+                    int studentId = student.Id;
+
+                    SetStudentSchedule(studentId, scheduleIdList, spaceIdList);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {

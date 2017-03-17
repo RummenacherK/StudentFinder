@@ -79,6 +79,9 @@
         @foreach (var item in scheduleList)
         {
                 <tr>
+                    <td class="hidden">
+                        <input type="hidden" name="scheduleIdList" value="@item.Id" />
+                    </td>
                     <td>
                         @item.Label
                     </td>
@@ -92,7 +95,7 @@
                         <div class="form-group">
 
                             <div class="col-md-10">
-                                @Html.DropDownList("spaceSelectList", spaceList, "1", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                @Html.DropDownList("spaceIdList", spaceList, "1", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                             </div>
                         </div>
                     </td>
