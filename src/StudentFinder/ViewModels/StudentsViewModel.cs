@@ -15,7 +15,7 @@ namespace StudentFinder.ViewModels
         public string StudentSchoolId { get; set; }
         public bool IsActive { get; set; }
 
-        public int GradeLevelId { get; set; }
+        public int LevelId { get; set; }
 
         //GradeLevel Description
         public string GradeLevel { get; set; }
