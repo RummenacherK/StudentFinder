@@ -16,17 +16,13 @@
                 @Html.DisplayNameFor(model => model.Label)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FromHh)
+                @Html.DisplayNameFor(model => model.From)
             </th>
+          
             <th>
-                @Html.DisplayNameFor(model => model.FromMm)
+                @Html.DisplayNameFor(model => model.To)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ToHh)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ToMm)
-            </th>
+          
             <th></th>
         </tr>
     </thead>
@@ -37,17 +33,13 @@
                 @Html.DisplayFor(modelItem => item.Label)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FromHh)
+                @Html.DisplayFor(modelItem => item.From)
             </td>
+            
             <td>
-                @Html.DisplayFor(modelItem => item.FromMm)
+                @Html.DisplayFor(modelItem => item.To)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ToHh)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ToMm)
-            </td>
+           
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
