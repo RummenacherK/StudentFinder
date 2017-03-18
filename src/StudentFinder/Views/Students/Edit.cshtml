@@ -6,6 +6,7 @@
     SelectList gradeLevel = ViewBag.gradeLevelSelectList;
     IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
     SelectList schoolList = ViewBag.schoolSelectList;
+    IEnumerable<StudentScheduleSpace> studentScheduleList = ViewBag.StudentScheduleList;
 }
 
 <h2>Edit</h2>
@@ -17,9 +18,9 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
-            <label asp-for="GradeLevelId" class="col-md-2 control-label"></label>
+            <label asp-for="LevelId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @Html.DropDownList("gradelevel", gradeLevel, new { @class = "form-control" })
+                @Html.DropDownList("LevelId", gradeLevel, new { @class = "form-control" })
 
             </div>
         </div>
@@ -37,13 +38,7 @@
                     <span asp-validation-for="StudentsSchool" class="text-danger" />
                 </div>
             </div>*@
-        <div class="form-group">
-            <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                @Html.DropDownList("schoolList", schoolList, new { @class = "form-control" })
-
-            </div>
-        </div>
+        <input type="hidden" asp-for="StudentsSchool" />
         <div class="form-group">
             <label asp-for="fName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -59,25 +54,35 @@
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
-        </div>
+        </div>*@
     </div>
-</form>
-<table>
-    <thead>
-        <tr>
-            <th>Period</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Room</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in scheduleList)
-        {
+
+    <table>
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Room</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in scheduleList)
+            {
+                string selectedSpace = String.Empty;
+                foreach (var x in studentScheduleList)
+                {
+                    if (item.Id == x.ScheduleId)
+                    {
+                        selectedSpace = spaceList.Where(s => s.Value == x.SpaceId.ToString()).Select(s => s.Text).SingleOrDefault();
+
+                    }
+                }
+
                 <tr>
                     <td class="hidden">
                         <input type="hidden" name="scheduleIdList" value="@item.Id" />
@@ -93,24 +98,27 @@
                     </td>
                     <td>
                         <div class="form-group">
-
                             <div class="col-md-10">
-                                @Html.DropDownList("spaceIdList", spaceList, "1", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                @Html.DropDownList("spaceIdList", spaceList, selectedSpace, new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                             </div>
                         </div>
                     </td>
-                    <td>
-                        <form asp-action="EditSchedule">
-                            @*<input type="hidden" id="" />*@
-                            <input type="submit" value="Save" class="btn btn-default" />
-                            
-                        </form>
-                        </td>
+                    <td></td>
                 </tr>
-                }
+            }
+            
+            <tr>
+                <td>
+
+                    @*<input type="hidden" id="" />*@
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </td>
+            </tr>
+
+
         </tbody>
     </table>
-
+</form>
 
         <div>
             <a asp-action="Index">Back to List</a>

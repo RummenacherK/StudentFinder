@@ -26,7 +26,7 @@ namespace StudentFinder.Models
         public string lName { get; set; }
         [Required]
         [Display(Name = "Grade")]
-        public int GradeLevelId { get; set; }
+        public int LevelId { get; set; }
         [Required]
         [Display(Name = "Current Student?")]
         public bool IsActive { get; set; }
