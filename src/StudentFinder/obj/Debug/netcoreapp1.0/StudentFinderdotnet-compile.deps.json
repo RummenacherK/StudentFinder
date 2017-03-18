@@ -34,7 +34,8 @@
           "Microsoft.Extensions.Logging.Debug": "1.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
-          "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.1.1"
+          "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.1.1",
+          "System.Linq.Parallel": "4.0.1"
         },
         "compile": {
           "StudentFinder.dll": {}
@@ -2825,7 +2826,8 @@
           "Microsoft.Extensions.Logging.Debug": "1.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
           "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
-          "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.1.1"
+          "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.1.1",
+          "System.Linq.Parallel": "4.0.1"
         },
         "runtime": {
           "StudentFinder.dll": {}

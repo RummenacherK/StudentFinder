@@ -32,5 +32,6 @@ namespace StudentFinder.Data
         public DbSet<Space> Space { get; set; }
         public DbSet<Student> Student { get; set; }
         public DbSet<StudentScheduleSpace> StudentScheduleSpace { get; set; }
+        public DbSet<Level> Level { get; set; }
     }
 }

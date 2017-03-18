@@ -15,18 +15,21 @@ namespace StudentFinder.Infrastructure
     {
 
 
-        private readonly StudentFinderContext _context;
+        private StudentFinderContext _context;
 
         public Utilities(StudentFinderContext context)
         {
-
+            _context = context;
         }
 
+       
         // Get Current Time of Day and Convert Hours and Minutes to Int    
 
         // Get Schedule data and compare to current time
 
+
         public int CompareTimes(DateTime today, int schoolid)
+
         {
             
             int hours = today.Hour;
@@ -35,7 +38,10 @@ namespace StudentFinder.Infrastructure
             var schedule = _context.Schedule.Where(s => s.SchoolId == schoolid);
             return schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
 
+
             
         }
     }
 }         
+
+    

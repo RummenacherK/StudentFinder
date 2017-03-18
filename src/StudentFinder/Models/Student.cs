@@ -26,12 +26,14 @@ namespace StudentFinder.Models
         public string lName { get; set; }
         [Required]
         [Display(Name = "Grade")]
-        public string GradeLevel { get; set; }
+        public int LevelId { get; set; }
         [Required]
         [Display(Name = "Current Student?")]
         public bool IsActive { get; set; }
 
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }
+
+        public virtual Level Level { get; set; }
 
     }
 }

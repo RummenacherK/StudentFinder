@@ -15,5 +15,8 @@ namespace StudentFinder.Models
 
         public int SpaceId { get; set; }
         public Space Space { get; set; }
+
+        //public int SchoolId { get; set; }
+        //public School School { get; set; }
     }
 }
