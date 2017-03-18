@@ -54,15 +54,15 @@ namespace StudentFinder.Controllers
       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SchoolId,Label,FromHh,FromMm,ToHh,ToMm")] Schedule schedule)
+        public async Task<IActionResult> Create([Bind("Id,SchoolId,Label,From,To")] Schedule schedule)
         {
-            // if (ModelState.IsValid)
-           // {
+             if (ModelState.IsValid)
+             {
                 _context.Add(schedule);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
-           // }
-            //return View(schedule);
+             }
+             return View(schedule);
         }
 
         // GET Edit Period
@@ -85,7 +85,7 @@ namespace StudentFinder.Controllers
     
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SchoolId,Label,FromHh,FromMm,ToHh,ToMm")] Schedule schedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SchoolId,Label,From,To")] Schedule schedule)
         {
             if (id != schedule.Id)
             {
