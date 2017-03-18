@@ -26,15 +26,16 @@ namespace StudentFinder.Infrastructure
 
         // Get Schedule data and compare to current time
 
-        public static int CompareTimes(DateTime today)
+        public int CompareTimes(DateTime today, int schoolid)
         {
-            int Id = 0;
+            
             int hours = today.Hour;
             int min = today.Minute;
             int total_min = (hours * 60) + min;
-            var schedule = _context.Schedule.Where(s => s.From == Id);
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolid);
+            return schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
 
-            for (int x = 0; Id < 10; x++) { Console.WriteLine(total_min); }
+            
         }
     }
 }         
