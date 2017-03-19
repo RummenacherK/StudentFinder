@@ -1,4 +1,4 @@
-@model IEnumerable<StudentFinder.Models.Schedule>
+@model IEnumerable<StudentFinder.ViewModels.ScheduleViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -33,11 +33,11 @@
                 @Html.DisplayFor(modelItem => item.Label)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.From)
+                @Html.DisplayFor(modelItem => item.FromTime)
             </td>
             
             <td>
-                @Html.DisplayFor(modelItem => item.To)
+                @Html.DisplayFor(modelItem => item.ToTime)
             </td>
            
             <td>
