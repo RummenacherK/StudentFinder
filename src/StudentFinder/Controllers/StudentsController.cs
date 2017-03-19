@@ -14,24 +14,61 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Cli.Utils;
 using NuGet.Versioning;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentFinder.Controllers
 {
+    [Authorize]
     public class StudentsController : Controller
     {
         private readonly StudentFinderContext _context;
 
-        public StudentsController(StudentFinderContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public StudentsController(StudentFinderContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
+        [AllowAnonymous]
+        public ActionResult Home()
+            {
+            return View();
+            }
+        
         // GET: Students
         public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0, int schoolId = 1)
         {
+            Utilities util = new Utilities();
+            var test = HttpContext.User;
+            var test2 = User.Identity.Name;
+            var userClaim = _userManager.GetUserId(test);
+            // var userId = Id;
+            var user = await _userManager.FindByIdAsync(userClaim);
+            if (user != null)
+            {
+                var has_claim = false;
+                var user_claim_list = await _userManager.GetClaimsAsync(user);
+                if (user_claim_list.Count > 0)
+                {
+                    has_claim = user_claim_list[0].Type == "SchoolId";
+
+                    var test3 = user_claim_list[2].Value;
+
+                    return null;
+                }
+
+
+                //if (!has_claim)
+                //{
+                //   await _userManager.AddClaimAsync(user, new Claim("SchoolId", user.SchoolId.ToString()));
+                //}
+            }
 
             //We need to get the ID of the user's school before we can show the specific schedule for them
+            //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
+            schoolId = await util.GetUserSchool(test); 
 
 
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
@@ -44,16 +81,16 @@ namespace StudentFinder.Controllers
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
            
             ViewBag.searchString = searchString;
-
-
-
+            
             //ANDREW:  PUT YOUR CODE HERE!
             //IQueryable<StudentsViewModel> studentsVM;
 
             //var student = new Student();
-            //var today = DateTime.Now;
-            //var currentPeriod = Utilities.CompareTimes(today);
-            var currentPeriod = 20; //This will need to be updated from Andrew's code
+            var today = DateTime.Now;
+            //var today = ""
+            
+            var currentPeriod = util.CompareTimes(today, schoolId);
+            //var currentPeriod = 20; //This will need to be updated from Andrew's code
 
             //END:  ANDREW SECTION
 
