@@ -29,14 +29,14 @@ namespace StudentFinder.Controllers
 
 
         // Get Schedule
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
 
             var schedule = _context.Schedule.Select(x => x).ToList();
 
             var scheduleVM = schedule.Select(s => new ScheduleViewModel()
             {
-                
+
                 SchoolId = s.SchoolId,
                 Label = s.Label,
                 Id = s.Id,
@@ -48,9 +48,9 @@ namespace StudentFinder.Controllers
         }
 
         // GET  Period Details
-        public async Task<IActionResult> Details()
+        public IActionResult Details()
         {
-            
+
 
 
             var schedule = _context.Schedule.Select(x => x).ToList();

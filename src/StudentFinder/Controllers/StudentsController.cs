@@ -33,22 +33,6 @@ namespace StudentFinder.Controllers
             //We need to get the ID of the user's school before we can show the specific schedule for them
 
 
-
-        //    private ApplicationUser GetCurrentUser(ApplicationDbContext context)
-        //{
-        //    var identity = User.Identity as ClaimsIdentity;
-        //    Claim identityClaim = identity.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        //    return context.Users.FirstOrDefault(u => u.SchoolId.ToString() == identityClaim.Value);
-        //}
-    
-            //var identity = (ClaimsIdentity) User.Identity;
-            //IEnumerable<Claim> claims = identity.Claims;
-
-            //var test = identity.FindFirst(ClaimTypes.Role).Value;
-            //var test2 = identity.FindFirst("SchoolId");
-            
-            //var spaceSort = _context.StudentScheduleSpace.OrderBy(c => c. Space.Id).Select(a => new { id = a.i})
-
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
@@ -76,17 +60,10 @@ namespace StudentFinder.Controllers
 
             //Select only Active Students & students from that school       
             var activeStudents = _context.StudentScheduleSpace.Where(a => a.Student.IsActive == true && a.Student.StudentsSchool == schoolId).Select(x => x);
-
-            //Select only students that have the current schoolId
-            //var currentStudents = activeStudents.Where(s => s.Student.StudentsSchool == schoolId ).Select(x => x);
-
+                        
             //Select entry on SSS table which matches the current time Period
             var s_all = activeStudents.Where(s => s.ScheduleId == currentPeriod).Select(x => x);
-        
-
-            //Old s_all code
-            //var s_all = _context.StudentScheduleSpace.Where(s => s.ScheduleId == some_ID).Select(x => x);
-            
+                                
             if (spaceListFilter > 0)
             {
                 s_all = s_all.Where(s => s.SpaceId == spaceListFilter);

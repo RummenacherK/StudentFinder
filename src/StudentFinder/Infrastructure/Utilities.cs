@@ -11,18 +11,18 @@ using System.Collections.Generic;
 
 namespace StudentFinder.Infrastructure
 {
-    public static class Utilities
+    public class Utilities
     {
-    
 
-        //private StudentFinderContext _context;
 
-        //public Utilities(StudentFinderContext context)
-        //{
-        //    _context = context;
-        //}
+        private StudentFinderContext _context;
 
-       
+        public Utilities(StudentFinderContext context)
+        {
+            _context = context;
+        }
+
+
         // Get Current Time of Day and Convert Hours and Minutes to Int    
 
         // Get Schedule data and compare to current time

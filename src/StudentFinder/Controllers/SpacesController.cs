@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentFinder.Data;
 using StudentFinder.Models;
+using StudentFinder.Infrastructure;
 
 namespace StudentFinder.Controllers
 {
@@ -43,7 +42,7 @@ namespace StudentFinder.Controllers
                         select s;
             if (!String.IsNullOrEmpty(searchString))
             {
-                space = space.Where(s => s.Room.Contains(searchString));
+                space = space.Where(s => s.Room.Contains(searchString) || s.Description.Contains(searchString) || s.Location.Contains(searchString));
                 //|| s.Description.Contains(searchString));
             }
             switch (sortOrder)
@@ -66,12 +65,13 @@ namespace StudentFinder.Controllers
                     space = space.OrderByDescending(s => s.Description);
                     break;
                 default:
-                    space = space.OrderBy(s => s.Id);
+                    space = space.OrderBy(s => s.Room);
                     break;
 
             }
 
-            return View(await _context.Space.ToListAsync());
+            int pageSize = 10;
+            return View(await PaginatedList<Space>.CreateAsync(space.AsNoTracking(), page ?? 1, pageSize));
 
 
         }
