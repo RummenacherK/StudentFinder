@@ -32,7 +32,7 @@ namespace StudentFinder.Controllers
         public IActionResult Index()
         {
 
-            var schedule = _context.Schedule.Select(x => x).ToList();
+            var schedule = _context.Schedule.OrderBy(s => s.From).Select(x => x).ToList();
 
             var scheduleVM = schedule.Select(s => new ScheduleViewModel()
             {
@@ -118,6 +118,7 @@ namespace StudentFinder.Controllers
             }
 
             ViewBag.HourSelectList = ScheduleDropDown.ChooseHour();
+        
 
             ViewBag.MinuteSelectList = ScheduleDropDown.ChooseMinute();
 
