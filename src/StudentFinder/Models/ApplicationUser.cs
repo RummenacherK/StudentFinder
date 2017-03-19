@@ -11,6 +11,6 @@ namespace StudentFinder.Models
     {
         public string fName { get; set; }
         public string lName { get; set; }
-        public int SchoolId { get; set; }
+        public string SchoolId { get; set; }
     }
 }

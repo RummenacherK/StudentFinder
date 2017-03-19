@@ -37,6 +37,12 @@
                     <li><a asp-area="" asp-controller="Spaces" asp-action="Index">Spaces</a></li>
                     <li><a asp-area="" asp-controller="Schedules" asp-action="Index">Schedule</a></li>
                     <li><a asp-area="" asp-controller="Schools" asp-action="Index">Schools</a></li>
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("SuperAdmin"))
+                    {
+                    <li><a asp-area="" asp-controller="ManageRoles" asp-action="Index">Roles</a></li>
+                    <li><a asp-area="" asp-controller="ManageUsers" asp-action="Index">Users</a></li>
+                    }
+
 
 
 

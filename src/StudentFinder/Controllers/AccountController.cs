@@ -52,14 +52,13 @@ namespace StudentFinder.Controllers
 
         #region
         // GET: Users/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> EditUser(string Id)
         {
             if (Id == null)
             {
                 return NotFound();
             }
-            EditUserViewModel e_user;
 
             var user = await _context.Users.Select(u => new EditUserViewModel()
             {
@@ -67,6 +66,7 @@ namespace StudentFinder.Controllers
                 Email = u.Email,
                 fName = u.fName,
                 lName = u.lName
+                //School Id needed?
             }).SingleOrDefaultAsync(s => s.Id == Id);
 
             if (user == null)
@@ -84,7 +84,7 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> EditUser(EditUserViewModel editUser) //string Id, [Bind("Id,Role")]
         {
             if (ModelState.IsValid)
@@ -192,13 +192,16 @@ namespace StudentFinder.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-        //    private ApplicationDbContext _context;
-            
-        //    public AccountController(ApplicationDbContext context )
-        //{
-        //    _context = context;
-        //}
+            //    private ApplicationDbContext _context;
 
+            //    public AccountController(ApplicationDbContext context )
+            //{
+            //    _context = context;
+            //}
+            if (returnUrl == null)
+            {
+                returnUrl = "/";
+            }
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
@@ -213,7 +216,7 @@ namespace StudentFinder.Controllers
 
                 string[] splitEmail = user.Email.Split('@');
 
-                string uDomain = splitEmail[1];
+                string uDomain = splitEmail[1].ToLower();
                 
                if (uDomain != null)
                 {
@@ -224,7 +227,7 @@ namespace StudentFinder.Controllers
                     }
                     else
                     {
-                        user.SchoolId = schoolId;
+                        user.SchoolId = schoolId.ToString();
                     }
                 }
                             
@@ -263,7 +266,7 @@ namespace StudentFinder.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(StudentFinder.Controllers.StudentsController.Index), "Home");
+            return RedirectToAction(nameof(StudentFinder.Controllers.StudentsController.Index), "/");
         }
 
         //
@@ -588,7 +591,7 @@ namespace StudentFinder.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(StudentFinder.Controllers.StudentsController.Index), "Home");
+                return RedirectToAction(nameof(StudentFinder.Controllers.StudentsController.Index), "Index");
             }
         }
 

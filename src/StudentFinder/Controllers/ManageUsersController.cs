@@ -7,6 +7,8 @@ using StudentFinder.Data;
 using StudentFinder.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using StudentFinder.ViewModels;
+using StudentFinder.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace StudentFinder.Controllers
 {
@@ -23,10 +25,25 @@ namespace StudentFinder.Controllers
         /// Get All Users
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public async Task<ActionResult> Index(int? page)
         {
-            var Users = db_context.Users.ToList();
-            return View(Users);
+
+
+            var Users = db_context.Users.Select(x => x);
+
+            var selectedUsers = Users.Select(u => new UserViewModel()
+            {
+                Id = u.Id,
+                lName = u.lName,
+                fName = u.fName,
+                SchoolId = u.SchoolId,
+                Email = u.Email
+                
+            });
+
+            int pageSize = 25;
+
+            return View(await PaginatedList<UserViewModel>.CreateAsync(selectedUsers.AsNoTracking(), page ?? 1, pageSize));
         }
 
     }

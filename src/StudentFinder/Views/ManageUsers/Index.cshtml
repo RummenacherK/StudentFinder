@@ -1,0 +1,52 @@
+﻿@model PaginatedList<StudentFinder.ViewModels.UserViewModel>
+
+@using StudentFinder.Infrastructure
+@using StudentFinder.Models
+@using StudentFinder.ViewModels
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>All Users</h2>
+
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.fName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-control" asp-controller="Account" asp-action="EditUser" asp-route-id="@item.Id">Edit</a>
+                    <a class="btn btn-danger btn-control" asp-controller="Account" asp-action="DeleteUser" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No Users Found</td>
+                
+                </tr>
+                }
+</tbody>
+</table>

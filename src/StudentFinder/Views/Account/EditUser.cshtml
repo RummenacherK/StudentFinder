@@ -1,0 +1,55 @@
+﻿@model EditUserViewModel
+@{
+    ViewData["Title"] = "Edit User";
+    SelectList rolelist = ViewBag.Role;
+}
+
+<h4>@ViewData["Title"]</h4>
+
+<form asp-controller="Account" asp-action="EditUser" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+    <hr />
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="fName" type="hidden" />
+    <input asp-for="lName" type="hidden" />
+    <input asp-for="Email" type="hidden" />
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="fName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="fName" class="form-control disabled" disabled />
+            <span asp-validation-for="fName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="lName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="lName" class="form-control" disabled />
+            <span asp-validation-for="lName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Email" class="form-control" disabled />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Role" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            @Html.DropDownList("Role", (IEnumerable<SelectListItem>)ViewBag.Role, null, new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+            @*@Html.DropDownList("Role", rolelist, new { @class = "form-control", @style = "width: 16rem; display:inline-block" })*@
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-success btn-control">Save</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
