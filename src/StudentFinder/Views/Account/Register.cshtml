@@ -31,6 +31,21 @@
         </div>
     </div>
     <div class="form-group">
+        <label asp-for="fName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="fName" class="form-control" />
+            <span asp-validation-for="fName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="lName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="lName" class="form-control" />
+            <span asp-validation-for="lName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <button type="submit" class="btn btn-default">Register</button>
         </div>

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Cli.Utils;
 using NuGet.Versioning;
 
+
 namespace StudentFinder.Controllers
 {
     public class StudentsController : Controller
@@ -51,7 +52,7 @@ namespace StudentFinder.Controllers
 
             //var student = new Student();
             //var today = DateTime.Now;
-            //var periodId = Utilities.CompareTimes(today);
+            //var currentPeriod = Utilities.CompareTimes(today);
             var currentPeriod = 20; //This will need to be updated from Andrew's code
 
             //END:  ANDREW SECTION

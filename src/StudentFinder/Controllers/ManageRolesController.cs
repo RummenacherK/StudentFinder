@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using StudentFinder.Data;
 using StudentFinder.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StudentFinder.Controllers
 {
+    //[Authorize(Roles ="SuperAdmin")]
     public class ManageRolesController : Controller
     {
         private ApplicationDbContext db_context;
