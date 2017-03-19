@@ -7,6 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentFinder.Data;
 using StudentFinder.Models;
+using StudentFinder.ViewModels;
+using StudentFinder.Infrastructure;
+using System.Collections;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.DotNet.Cli.Utils;
+using NuGet.Versioning;
 
 namespace StudentFinder.Controllers
 {
@@ -19,23 +26,42 @@ namespace StudentFinder.Controllers
             _context = context;    
         }
 
-   
+
 
         // Get Schedule
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Schedule.ToListAsync());
+
+            var schedule = _context.Schedule.Select(x => x).ToList();
+
+            var scheduleVM = schedule.Select(s => new ScheduleViewModel()
+            {
+                
+                SchoolId = s.SchoolId,
+                Label = s.Label,
+                Id = s.Id,
+                From = s.From,
+                To = s.To
+            });
+
+            return View(scheduleVM);
         }
 
         // GET  Period Details
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            
 
-            var schedule = await _context.Schedule.SingleOrDefaultAsync(m => m.Id == id);
+
+            var schedule = _context.Schedule.Select(x => x).ToList();
+
+            var scheduleVM = schedule.Select(s => new ScheduleViewModel()
+            {
+                Label = s.Label,
+                From = s.From,
+                To = s.To
+            });
+
             if (schedule == null)
             {
                 return NotFound();
@@ -47,6 +73,12 @@ namespace StudentFinder.Controllers
         // GET Create Period
         public IActionResult Create()
         {
+          
+
+            ViewBag.HourSelectList = ScheduleDropDown.ChooseHour();
+
+            ViewBag.MinuteSelectList = ScheduleDropDown.ChooseMinute();
+
             return View();
         }
 
@@ -54,8 +86,12 @@ namespace StudentFinder.Controllers
       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SchoolId,Label,From,To")] Schedule schedule)
+        public async Task<IActionResult> Create([Bind("Id,SchoolId,Label,From,To")] Schedule schedule, int fromMinute, int toMinute, int fromHour, int toHour)
         {
+            schedule.From = (fromHour * 60) + fromMinute;
+
+            schedule.To = (toHour * 60) + toMinute;
+
              if (ModelState.IsValid)
              {
                 _context.Add(schedule);
