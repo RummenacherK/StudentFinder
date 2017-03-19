@@ -14,13 +14,16 @@ namespace StudentFinder.Models
         [Required]
         public int SchoolId { get; set; }
         [Required]
+        [Display(Name = "Name:")]
         public string Label { get; set; }
         [Required]
         //  [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
+        [Display(Name = "Start Time:")]
         public int From { get; set; }
        
         [Required]
         //  [RegularExpression(@"^([1-9]|0[1-9]|1[0-2])$", ErrorMessage = "Invalid Time.")]
+        [Display(Name = "End Time:")]
         public int To { get; set; }
        
 

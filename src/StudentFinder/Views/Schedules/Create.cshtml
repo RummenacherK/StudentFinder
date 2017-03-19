@@ -21,22 +21,49 @@
         <div class="form-group">
             <label asp-for="From" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="From" class="form-control" />
-                <span asp-validation-for="From" class="text-danger" />
-            </div>
+                <div class="col-md-4">
+                    <label>Hour</label>
+                    <select asp-for="From" id="fromHour" name="fromHour"
+                        asp-items="@(new SelectList(ViewBag.HourSelectList,"Value","Text"))">
+                    <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="From" class="text-danger" />
+                </div>
+                 <div class="col-md-4">
+                    <label>Minute</label>
+                     <select asp-for="From" id="fromMinute" name="fromMinute"
+                         asp-items="@(new SelectList(ViewBag.MinuteSelectList,"Value","Text"))">
+                     <option>Please select one</option>
+                     </select>
+                     <span asp-validation-for="From" class="text-danger" />
+                 </div>
+             </div>
         </div>
        
         <div class="form-group">
             <label asp-for="To" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="To" class="form-control" />
-                <span asp-validation-for="To" class="text-danger" />
+                <div class="col-md-4">
+                    <label>Hour</label>
+                    <select asp-for="To" id="toHour" name="toHour"
+                            asp-items="@(new SelectList(ViewBag.HourSelectList,"Value","Text"))">
+                        <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="To" class="text-danger" />
+                </div>
+                <div class="col-md-4">
+                    <label>Minute</label>
+                    <select asp-for="To"  id="toMinute" name="toMinute"
+                            asp-items="@(new SelectList(ViewBag.MinuteSelectList,"Value","Text"))">
+                        <option>Please select one</option>
+                    </select>
+                    <span asp-validation-for="To" class="text-danger" />
+                </div>
             </div>
         </div>
-       
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
