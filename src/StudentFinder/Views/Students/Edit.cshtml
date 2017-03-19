@@ -53,7 +53,12 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
-
+        <div class="form-group hidden">
+            <label asp-for="IsActive" class="col-md-2 control-label"></label>
+            <div class="checkbox">
+                <input asp-for="IsActive" />
+            </div>
+        </div>
         @*<div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
@@ -99,11 +104,13 @@
                     <td>
                         <div class="form-group">
                             <div class="col-md-10">
-                                @Html.DropDownList("spaceIdList", spaceList, selectedSpace, new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                                @Html.DropDownList("spaceIdList", spaceList, selectedSpace, new { spaceIdList = spaceList.SelectedValue, @class = "form-control", @style = "width: 16rem; display:inline-block" })
                             </div>
                         </div>
                     </td>
-                    <td></td>
+                    <td>
+
+                    </td>
                 </tr>
             }
             

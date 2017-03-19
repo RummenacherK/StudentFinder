@@ -114,7 +114,7 @@ namespace StudentFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("GradeLevelId");
+                    //b.Property<int>("GradeLevelId");
 
                     b.Property<bool>("IsActive");
 
