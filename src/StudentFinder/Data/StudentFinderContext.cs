@@ -15,6 +15,7 @@ namespace StudentFinder.Data
             
         }
 
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<StudentScheduleSpace>()
@@ -24,6 +25,7 @@ namespace StudentFinder.Data
 
         public StudentFinderContext(DbContextOptions<StudentFinderContext> options) : base(options)
         {
+            
             Database.EnsureCreated();
         }
 

@@ -12,11 +12,11 @@ namespace StudentFinder.Migrations
                 name: "GradeLevel",
                 table: "Student");
 
-            migrationBuilder.AddColumn<int>(
-                name: "GradeLevelId",
-                table: "Student",
-                nullable: false,
-                defaultValue: 0);
+            //migrationBuilder.AddColumn<int>(
+            //    name: "GradeLevelId",
+            //    table: "Student",
+            //    nullable: false,
+            //    defaultValue: 0);
 
             migrationBuilder.AddColumn<int>(
                 name: "LevelId",
@@ -47,9 +47,9 @@ namespace StudentFinder.Migrations
                 name: "IX_Student_LevelId",
                 table: "Student");
 
-            migrationBuilder.DropColumn(
-                name: "GradeLevelId",
-                table: "Student");
+            //migrationBuilder.DropColumn(
+            //    name: "GradeLevelId",
+            //    table: "Student");
 
             migrationBuilder.DropColumn(
                 name: "LevelId",

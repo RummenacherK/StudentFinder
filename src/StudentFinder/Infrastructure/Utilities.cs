@@ -11,16 +11,16 @@ using System.Collections.Generic;
 
 namespace StudentFinder.Infrastructure
 {
-    public class Utilities
+    public static class Utilities
     {
+    
 
+        //private StudentFinderContext _context;
 
-        private StudentFinderContext _context;
-
-        public Utilities(StudentFinderContext context)
-        {
-            _context = context;
-        }
+        //public Utilities(StudentFinderContext context)
+        //{
+        //    _context = context;
+        //}
 
        
         // Get Current Time of Day and Convert Hours and Minutes to Int    
@@ -39,7 +39,6 @@ namespace StudentFinder.Infrastructure
             return schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
 
 
-            
         }
     }
 }         
