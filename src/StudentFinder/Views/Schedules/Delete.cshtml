@@ -1,4 +1,4 @@
-@model StudentFinder.Models.Schedule
+@model StudentFinder.ViewModels.ScheduleViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -21,14 +21,14 @@
             @Html.DisplayNameFor(model => model.From)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.From)
-        </dd>  
-       
+            @Html.DisplayFor(model => model.FromTime)
+        </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.To)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.To)
+            @Html.DisplayFor(model => model.ToTime)
         </dd>
        
     </dl>

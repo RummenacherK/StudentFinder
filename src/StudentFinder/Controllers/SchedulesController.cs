@@ -48,26 +48,28 @@ namespace StudentFinder.Controllers
         }
 
         // GET  Period Details
-        public IActionResult Details()
+        public IActionResult Details(int Id)
         {
+            
 
-
-
-            var schedule = _context.Schedule.Select(x => x).ToList();
-
-            var scheduleVM = schedule.Select(s => new ScheduleViewModel()
-            {
-                Label = s.Label,
-                From = s.From,
-                To = s.To
-            });
+            var schedule = _context.Schedule.Where(x => x.Id == Id).SingleOrDefault();
 
             if (schedule == null)
             {
                 return NotFound();
             }
 
-            return View(schedule);
+            ScheduleViewModel scheduleViewModel = new ScheduleViewModel
+            {
+                SchoolId = schedule.SchoolId,
+                Label = schedule.Label,
+                Id = schedule.Id,
+                From = schedule.From,
+                To = schedule.To
+            };
+          
+
+            return View(scheduleViewModel);
         }
 
         // GET Create Period
@@ -114,6 +116,11 @@ namespace StudentFinder.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.HourSelectList = ScheduleDropDown.ChooseHour();
+
+            ViewBag.MinuteSelectList = ScheduleDropDown.ChooseMinute();
+
             return View(schedule);
         }
 
@@ -121,12 +128,16 @@ namespace StudentFinder.Controllers
     
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SchoolId,Label,From,To")] Schedule schedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SchoolId,Label,From,To")] Schedule schedule, int fromMinute, int toMinute, int fromHour, int toHour)
         {
             if (id != schedule.Id)
             {
                 return NotFound();
             }
+
+            schedule.From = (fromHour * 60) + fromMinute;
+
+            schedule.To = (toHour * 60) + toMinute;
 
             if (ModelState.IsValid)
             {
@@ -165,7 +176,17 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
-            return View(schedule);
+            ScheduleViewModel scheduleViewModel = new ScheduleViewModel
+            {
+                SchoolId = schedule.SchoolId,
+                Label = schedule.Label,
+                Id = schedule.Id,
+                From = schedule.From,
+                To = schedule.To
+            };
+
+
+            return View(scheduleViewModel);
         }
 
         // POST: Delete Period
