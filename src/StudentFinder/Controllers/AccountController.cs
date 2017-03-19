@@ -18,9 +18,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StudentFinder.Controllers
 {
-    
-
-    [Authorize]
+      
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

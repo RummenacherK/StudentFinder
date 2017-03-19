@@ -85,7 +85,7 @@ namespace StudentFinder
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Students}/{action=Index}/{id?}");
+                    template: "{controller=Students}/{action=Home}/{id?}");
             });
         }
     }
