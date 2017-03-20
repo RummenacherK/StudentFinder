@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using StudentFinder.Services;
 using Microsoft.AspNetCore.Mvc;
 
 

@@ -38,39 +38,23 @@ namespace StudentFinder.Controllers
             }
         
         // GET: Students
-        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0, int schoolId = 1)
+        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0)
         {
             Utilities util = new Utilities();
+
+            //Get School of the User:  See method at bottom of controller
             var test = HttpContext.User;
-            var test2 = User.Identity.Name;
-            var userClaim = _userManager.GetUserId(test);
-            // var userId = Id;
-            var user = await _userManager.FindByIdAsync(userClaim);
-            if (user != null)
+
+            if (test == null)
             {
-                var has_claim = false;
-                var user_claim_list = await _userManager.GetClaimsAsync(user);
-                if (user_claim_list.Count > 0)
-                {
-                    has_claim = user_claim_list[0].Type == "SchoolId";
-
-                    var test3 = user_claim_list[2].Value;
-
-                    return null;
-                }
-
-
-                //if (!has_claim)
-                //{
-                //   await _userManager.AddClaimAsync(user, new Claim("SchoolId", user.SchoolId.ToString()));
-                //}
+                return Home();
             }
-
             //We need to get the ID of the user's school before we can show the specific schedule for them
             //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
-            schoolId = await util.GetUserSchool(test); 
 
-
+            int schoolId = await GetUserSchool(test);
+         
+            //Create Viewbags for the following data
             var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
@@ -81,19 +65,13 @@ namespace StudentFinder.Controllers
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
            
             ViewBag.searchString = searchString;
-            
-            //ANDREW:  PUT YOUR CODE HERE!
-            //IQueryable<StudentsViewModel> studentsVM;
-
-            //var student = new Student();
+           
+            //Get Today and the schedule for today
             var today = DateTime.Now;
-            //var today = ""
-            
+           
             var currentPeriod = util.CompareTimes(today, schoolId);
-            //var currentPeriod = 20; //This will need to be updated from Andrew's code
-
-            //END:  ANDREW SECTION
-
+           
+            //Create Viewbag of current period
             ViewBag.DisplayPeriod = _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
 
             //Select only Active Students & students from that school       
@@ -199,7 +177,7 @@ namespace StudentFinder.Controllers
             }
 
             //add data back to view so if something goes wrong user doesnt have to reenter it
-            return View(student);
+            return View();
         }
 
         // GET: Students/Edit/5
@@ -437,5 +415,26 @@ namespace StudentFinder.Controllers
         }
 
 
+        [Authorize(Roles = "User")]
+        public async Task<int> GetUserSchool(ClaimsPrincipal Id)
+        {
+
+            var userClaim = _userManager.GetUserId(Id);
+            // var userId = Id;
+            var user = await _userManager.FindByIdAsync(userClaim);
+            if (user == null) return 0;
+            var has_claim = false;
+            var user_claim_list = await _userManager.GetClaimsAsync(user);
+            if (user_claim_list.Count > 0)
+            {
+                //has_claim = user_claim_list[0].Type == "SchoolId";
+
+                var newUserSchool = Convert.ToInt32(user_claim_list[2].Value);
+
+                return newUserSchool;
+            }
+
+            return 0;
+        }
     }
 }
