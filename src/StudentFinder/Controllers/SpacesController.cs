@@ -1,27 +1,42 @@
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentFinder.Data;
 using StudentFinder.Models;
 using StudentFinder.Infrastructure;
+using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
     public class SpacesController : Controller
     {
         private readonly StudentFinderContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private ISession _session => _httpContextAccessor.HttpContext.Session;
 
-        public SpacesController(StudentFinderContext context)
+        public SpacesController(StudentFinderContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+
         }
 
         // GET: Spaces
         public async Task<IActionResult> Index(string sortOrder, string currentFilter,
             string searchString, int? page)
         {
+            //We need to get the ID of the user's school before we can show the specific schedule for them
+            //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
+            int? schoolId = _session.GetInt32("schoolId").Value;
+
             ViewData["CurrentSort"] = sortOrder;
             ViewData["RoomSortParm"] = String.IsNullOrEmpty(sortOrder) ? "room_desc" : "";
             ViewData["LocationSortParm"] = sortOrder == "location" ? "location_desc" : "Location";
@@ -39,6 +54,7 @@ namespace StudentFinder.Controllers
             ViewData["CurrentFilter"] = searchString;
 
             var space = from s in _context.Space
+                        where s.SchoolId == schoolId
                         select s;
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -85,7 +101,12 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
-            var space = await _context.Space.SingleOrDefaultAsync(m => m.Id == id);
+            //We need to get the ID of the user's school before we can show the specific schedule for them
+            //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+
+            var space = await _context.Space.Where(s => s.SchoolId == schoolId).SingleOrDefaultAsync(m => m.Id == id);
             if (space == null)
             {
                 return NotFound();
@@ -105,10 +126,17 @@ namespace StudentFinder.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Location,Room")] Space space)
+        public async Task<IActionResult> Create([Bind("Id,Description,Location,Room,SchoolId")] Space space)
         {
+            int schoolId = _session.GetInt32("schoolId").Value;
+            space.SchoolId = schoolId;
+
             if (ModelState.IsValid)
             {
+                //We need to get the ID of the user's school before we can show the specific schedule for them
+                //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
+                
+
                 _context.Add(space);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -124,7 +152,11 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
-            var space = await _context.Space.SingleOrDefaultAsync(m => m.Id == id);
+            //We need to get the ID of the user's school before we can show the specific schedule for them
+            //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+            var space = await _context.Space.Where(s => s.SchoolId == schoolId).SingleOrDefaultAsync(m => m.Id == id);
             if (space == null)
             {
                 return NotFound();
@@ -199,5 +231,35 @@ namespace StudentFinder.Controllers
         {
             return _context.Space.Any(e => e.Id == id);
         }
+
+        //[Authorize(Roles = "User")]
+        //public async Task<int> GetUserSchool()
+        //{
+        //    //Get School of the User:  See method at bottom of controller
+
+        //    var test = HttpContext.User;
+
+        //    if (test == null)
+        //    {
+        //        RedirectToRoute("Students", "Home");
+        //    }
+        //    var userClaim = _userManager.GetUserId(test);
+        //    // var userId = Id;
+        //    var user = await _userManager.FindByIdAsync(userClaim);
+        //    if (user == null) return 0;
+        //    var has_claim = false;
+        //    var user_claim_list = await _userManager.GetClaimsAsync(user);
+        //    if (user_claim_list.Count > 0)
+        //    {
+        //        //has_claim = user_claim_list[0].Type == "SchoolId";
+
+        //        var newUserSchool = Convert.ToInt32(user_claim_list[2].Value);
+
+        //        return newUserSchool;
+        //    }
+
+        //    return 0;
+        //}
+
     }
 }
