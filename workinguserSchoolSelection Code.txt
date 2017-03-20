@@ -1,0 +1,29 @@
+Utilities util = new Utilities();
+            var test = HttpContext.User;J
+            var test2 = User.Identity.Name;
+            var userClaim = _userManager.GetUserId(test);
+            // var userId = Id;
+            var user = await _userManager.FindByIdAsync(userClaim);
+            if (user != null)
+            {
+                var has_claim = false;
+                var user_claim_list = await _userManager.GetClaimsAsync(user);
+                if (user_claim_list.Count > 0)
+                {
+                    has_claim = user_claim_list[0].Type == "SchoolId";
+
+                    var test3 = user_claim_list[2].Value;
+
+                    return null;
+                }
+
+
+                //if (!has_claim)
+                //{
+                //   await _userManager.AddClaimAsync(user, new Claim("SchoolId", user.SchoolId.ToString()));
+                //}
+            }
+
+            //We need to get the ID of the user's school before we can show the specific schedule for them
+            //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
+            schoolId = await util.GetUserSchool(test); 

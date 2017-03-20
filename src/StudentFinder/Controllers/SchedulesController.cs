@@ -14,16 +14,20 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Cli.Utils;
 using NuGet.Versioning;
+using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
     public class SchedulesController : Controller
     {
         private readonly StudentFinderContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private ISession _session => _httpContextAccessor.HttpContext.Session;
 
-        public SchedulesController(StudentFinderContext context)
+        public SchedulesController(StudentFinderContext context, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;    
+            _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -32,7 +36,9 @@ namespace StudentFinder.Controllers
         public IActionResult Index()
         {
 
-            var schedule = _context.Schedule.OrderBy(s => s.From).Select(x => x).ToList();
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).OrderBy(s => s.From).Select(x => x).ToList();
 
             var scheduleVM = schedule.Select(s => new ScheduleViewModel()
             {
@@ -50,9 +56,10 @@ namespace StudentFinder.Controllers
         // GET  Period Details
         public IActionResult Details(int Id)
         {
-            
+            int schoolId = _session.GetInt32("schoolId").Value;
 
-            var schedule = _context.Schedule.Where(x => x.Id == Id).SingleOrDefault();
+
+            var schedule = _context.Schedule.Where(x => x.Id == Id && x.SchoolId == schoolId).SingleOrDefault();
 
             if (schedule == null)
             {
@@ -94,7 +101,9 @@ namespace StudentFinder.Controllers
 
             schedule.To = (toHour * 60) + toMinute;
 
-             if (ModelState.IsValid)
+            schedule.SchoolId =  _session.GetInt32("schoolId").Value;
+            
+            if (ModelState.IsValid)
              {
                 _context.Add(schedule);
                 await _context.SaveChangesAsync();
@@ -111,7 +120,9 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
-            var schedule = await _context.Schedule.SingleOrDefaultAsync(m => m.Id == id);
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+            var schedule = await _context.Schedule.Where(s => s.SchoolId == schoolId).SingleOrDefaultAsync(m => m.Id == id);
             if (schedule == null)
             {
                 return NotFound();
