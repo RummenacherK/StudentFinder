@@ -13,10 +13,13 @@ namespace StudentFinder.ViewModels
         [Required]
         public int SchoolId { get; set; }
         [Required]
+        [Display(Name = "Name")]
         public string Label { get; set; }
-        [Required]   
+        [Required]
+        [Display(Name = "Start Time")]
         public int From { get; set; }
         [Required]
+        [Display(Name = "End Time")]
         public int To { get; set; }
         
         [DisplayFormat(DataFormatString = "{0:hh\\:mm}")]
@@ -34,11 +37,7 @@ namespace StudentFinder.ViewModels
             get
             {
                 return TimeSpan.FromMinutes((double)To);
-            }
-           
+            }         
         }
-
-       
-
     }
 }
