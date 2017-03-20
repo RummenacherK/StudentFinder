@@ -153,12 +153,18 @@ namespace StudentFinder.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<int>("SchoolId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);
+
+                    b.Property<string>("fName");
+
+                    b.Property<string>("lName");
 
                     b.HasKey("Id");
 

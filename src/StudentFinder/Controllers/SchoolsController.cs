@@ -58,6 +58,7 @@ namespace StudentFinder.Controllers
         {
             if (ModelState.IsValid)
             {
+                school.Domain = school.Domain.ToLower();
                 _context.Add(school);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -97,6 +98,7 @@ namespace StudentFinder.Controllers
             {
                 try
                 {
+                    school.Domain = school.Domain.ToLower();
                     _context.Update(school);
                     await _context.SaveChangesAsync();
                 }

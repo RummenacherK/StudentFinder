@@ -1,26 +1,28 @@
-@model IEnumerable<StudentFinder.Models.Schedule>
+@model IEnumerable<StudentFinder.ViewModels.ScheduleViewModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Schedule</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add New Period</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.From)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Label)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.From)
+            </th>
+          
+            <th>
                 @Html.DisplayNameFor(model => model.To)
             </th>
+          
             <th></th>
         </tr>
     </thead>
@@ -28,17 +30,20 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.From)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Label)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.To)
+                @Html.DisplayFor(modelItem => item.FromTime)
             </td>
+            
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                @Html.DisplayFor(modelItem => item.ToTime)
+            </td>
+           
+            <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+               
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

@@ -1,0 +1,13 @@
+*.dll
+src/StudentFinder/bin/Debug/netcoreapp1.0/StudentFinder.dll
+*.dll
+src/StudentFinder/bin/Debug/netcoreapp1.0/StudentFinder.pdb
+*.json
+src/StudentFinder/bin/Debug/netcoreapp1.0/StudentFinder.runtimeconfig.dev.json
+.vs/StudentFinder/v14/.suo
+*.IncrementalCache
+*.rsp
+src/StudentFinder/obj/Debug/netcoreapp1.0/.SDKVersion
+*.SDKVersion
+*.dll
+*.SDKVersion

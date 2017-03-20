@@ -1,13 +1,20 @@
-@model IEnumerable<StudentFinder.Models.Student>
+@model PaginatedList<StudentFinder.ViewModels.StudentsViewModel>
 
+@using StudentFinder.Infrastructure
+@using StudentFinder.Models
+@using StudentFinder.ViewModels
 @{
     ViewData["Title"] = "Index";
     SelectList spaceList = ViewBag.SpaceSelectList;
     SelectList scheduleList = ViewBag.ScheduleSelectList;
+    if (string.IsNullOrEmpty(ViewBag.searchString))
+    {
+        ViewBag.searchString = "Search Student Name";
+    }
 
 }
 
-<h2>Index</h2>
+<h2>Current Period:  @ViewBag.DisplayPeriod</h2>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -15,68 +22,111 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th colspan="2" class="text-justify">
                 <form method="post" id="SearchString" action="@Url.Action("Index", "Students")">
                     <div class="form-group no-color has-feedback">
-                        <input class="form-control hasclear" type="text" id="SearchString" name="SearchString" value="@ViewData["currentFilter"]" />
+                        <input class="form-control hasclear" type="text" id="SearchString" name="SearchString" value="" placeholder="@ViewBag.searchString" />
                         <span class="clearer gliphyicon gliphyicon-remove form-control-feedback"></span>
                     </div>
                 </form>
             </th>
             <th>
                 <form method="post" id="spaceFilter" action="@Url.Action("Index", "Students")">
-                   @Html.DropDownList("spaceListFiltet", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                    @Html.DropDownList("spaceListFilter", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                 </form>
-            </th>
-            @*<th>
-                <form method="post" id="scheduleFilter" action="@Url.Action("Index", "Students")">
-                    @Html.DropDownList("scheduleListFiltet", scheduleList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
-                </form>
-            </th>*@
+            </th>           
         </tr>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.GradeLevel)
+            <th class="col-md-2">
+                <h4>Last Name</h4>
+            </th>
+            <th class="col-md-2">
+                <h4>First Name</h4>
+            </th>
+            <th class="col-xs-1">
+                <h4>Grade</h4>
+            </th>
+            <th class="col-md-2">
+                <h4>School ID</h4>
+            </th>
+            <th class="col-md-2">
+                <h4>Current Room</h4>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentSchoolId)
+                <h4 class="text-center">Details</h4>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StudentsSchool)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.fName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.lName)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.GradeLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StudentSchoolId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StudentsSchool)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.lName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.lName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.fName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GradeLevel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StudentSchoolId)
+                </td>           
+                <td>
+                    @Html.DisplayFor(modelItem => item.Room)
+                </td>
+                <td class="text-center">
+                    <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<div class="center-block">
+    <a asp-action="Index"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-page="@(Model.PageIndex - 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @prevDisabled btn">
+        Previous
+    </a>
+    <a asp-action="Index"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-page="@(Model.PageIndex + 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @nextDisabled btn">
+        Next
+    </a>
+    <span>Page @(Model.PageIndex) of @(Model.TotalPages)</span>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#spaceListFilter").change(function () {
+                $("#spaceFilter").submit();
+            });
+
+            $(".hasclear").keyup(function () {
+                var t = $(this);
+                t.next('span').toggle(Boolean(t.val()));
+            });
+
+            $(".clearer").hide($(this).prev('input').val());
+
+            $(".clearer").click(function () {
+                $(this).prev('input').val('').focus();
+                $(this).hide();
+            });
+        });
+    </script>
+}

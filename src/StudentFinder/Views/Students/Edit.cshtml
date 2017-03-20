@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "Edit";
+    SelectList spaceList = ViewBag.SpaceSelectList;
+    SelectList gradeLevel = ViewBag.gradeLevelSelectList;
+    IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
+    SelectList schoolList = ViewBag.schoolSelectList;
+    IEnumerable<StudentScheduleSpace> studentScheduleList = ViewBag.StudentScheduleList;
 }
 
 <h2>Edit</h2>
@@ -11,28 +16,29 @@
         <h4>Student</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Id" />
         <div class="form-group">
-            <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
+            <label asp-for="LevelId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="GradeLevel" class="form-control" />
-                <span asp-validation-for="GradeLevel" class="text-danger" />
+                @Html.DropDownList("LevelId", gradeLevel, new { @class = "form-control" })
+
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="StudentId" class="col-md-2 control-label"></label>
+            <label asp-for="StudentSchoolId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="StudentId" class="form-control" />
-                <span asp-validation-for="StudentId" class="text-danger" />
+                <input asp-for="StudentSchoolId" class="form-control" />
+                <span asp-validation-for="StudentSchoolId" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="StudentsSchool" class="form-control" />
-                <span asp-validation-for="StudentsSchool" class="text-danger" />
-            </div>
-        </div>
+        @*<div class="form-group">
+                <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="StudentsSchool" class="form-control" />
+                    <span asp-validation-for="StudentsSchool" class="text-danger" />
+                </div>
+            </div>*@
+        <input type="hidden" asp-for="StudentsSchool" />
         <div class="form-group">
             <label asp-for="fName" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -47,18 +53,84 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group hidden">
+            <label asp-for="IsActive" class="col-md-2 control-label"></label>
+            <div class="checkbox">
+                <input asp-for="IsActive" />
+            </div>
+        </div>
+        @*<div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
-        </div>
+        </div>*@
     </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Period</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Room</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in scheduleList)
+            {
+                string selectedSpace = String.Empty;
+                foreach (var x in studentScheduleList)
+                {
+                    if (item.Id == x.ScheduleId)
+                    {
+                        selectedSpace = spaceList.Where(s => s.Value == x.SpaceId.ToString()).Select(s => s.Text).SingleOrDefault();
+
+                    }
+                }
+
+                <tr>
+                    <td class="hidden">
+                        <input type="hidden" name="scheduleIdList" value="@item.Id" />
+                    </td>
+                    <td>
+                        @item.Label
+                    </td>
+                    <td>
+                        @item.From
+                    </td>
+                    <td>
+                        @item.To
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <div class="col-md-10">
+                                @Html.DropDownList("spaceIdList", spaceList, selectedSpace, new { spaceIdList = spaceList.SelectedValue, @class = "form-control", @style = "width: 16rem; display:inline-block" })
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+            }
+            
+            <tr>
+                <td>
+
+                    @*<input type="hidden" id="" />*@
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </td>
+            </tr>
+
+
+        </tbody>
+    </table>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }

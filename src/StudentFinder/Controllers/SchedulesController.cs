@@ -7,6 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentFinder.Data;
 using StudentFinder.Models;
+using StudentFinder.ViewModels;
+using StudentFinder.Infrastructure;
+using System.Collections;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.DotNet.Cli.Utils;
+using NuGet.Versioning;
 
 namespace StudentFinder.Controllers
 {
@@ -19,21 +26,42 @@ namespace StudentFinder.Controllers
             _context = context;    
         }
 
-        // GET: Schedules
-        public async Task<IActionResult> Index()
+
+
+        // Get Schedule
+        public IActionResult Index()
         {
-            return View(await _context.Schedule.ToListAsync());
+
+            var schedule = _context.Schedule.Select(x => x).ToList();
+
+            var scheduleVM = schedule.Select(s => new ScheduleViewModel()
+            {
+
+                SchoolId = s.SchoolId,
+                Label = s.Label,
+                Id = s.Id,
+                From = s.From,
+                To = s.To
+            });
+
+            return View(scheduleVM);
         }
 
-        // GET: Schedules/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET  Period Details
+        public IActionResult Details()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var schedule = await _context.Schedule.SingleOrDefaultAsync(m => m.Id == id);
+
+
+            var schedule = _context.Schedule.Select(x => x).ToList();
+
+            var scheduleVM = schedule.Select(s => new ScheduleViewModel()
+            {
+                Label = s.Label,
+                From = s.From,
+                To = s.To
+            });
+
             if (schedule == null)
             {
                 return NotFound();
@@ -42,29 +70,38 @@ namespace StudentFinder.Controllers
             return View(schedule);
         }
 
-        // GET: Schedules/Create
+        // GET Create Period
         public IActionResult Create()
         {
+          
+
+            ViewBag.HourSelectList = ScheduleDropDown.ChooseHour();
+
+            ViewBag.MinuteSelectList = ScheduleDropDown.ChooseMinute();
+
             return View();
         }
 
-        // POST: Schedules/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST Create Period
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,From,Label,To")] Schedule schedule)
+        public async Task<IActionResult> Create([Bind("Id,SchoolId,Label,From,To")] Schedule schedule, int fromMinute, int toMinute, int fromHour, int toHour)
         {
-            if (ModelState.IsValid)
-            {
+            schedule.From = (fromHour * 60) + fromMinute;
+
+            schedule.To = (toHour * 60) + toMinute;
+
+             if (ModelState.IsValid)
+             {
                 _context.Add(schedule);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
-            }
-            return View(schedule);
+             }
+             return View(schedule);
         }
 
-        // GET: Schedules/Edit/5
+        // GET Edit Period
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,12 +117,11 @@ namespace StudentFinder.Controllers
             return View(schedule);
         }
 
-        // POST: Schedules/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST Edit Period
+    
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,From,Label,To")] Schedule schedule)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SchoolId,Label,From,To")] Schedule schedule)
         {
             if (id != schedule.Id)
             {
@@ -115,7 +151,7 @@ namespace StudentFinder.Controllers
             return View(schedule);
         }
 
-        // GET: Schedules/Delete/5
+        // GET Delete Period
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -132,7 +168,7 @@ namespace StudentFinder.Controllers
             return View(schedule);
         }
 
-        // POST: Schedules/Delete/5
+        // POST: Delete Period
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

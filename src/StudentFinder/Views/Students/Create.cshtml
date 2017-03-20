@@ -1,8 +1,12 @@
-@model StudentFinder.Models.Student
+@model StudentFinder.ViewModels.StudentsViewModel
+
 
 @{
     ViewData["Title"] = "Create";
     SelectList spaceList = ViewBag.SpaceSelectList;
+    SelectList gradeLevel = ViewBag.gradeLevelSelectList;
+    IEnumerable<Schedule> scheduleList = ViewBag.scheduleViewBag;
+    SelectList schoolList = ViewBag.schoolSelectList;
 
 }
 
@@ -13,11 +17,18 @@
         <h4>Student</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
+        @*<div class="form-group">
             <label asp-for="GradeLevel" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="GradeLevel" class="form-control" />
                 <span asp-validation-for="GradeLevel" class="text-danger" />
+            </di>v
+        </div>*@
+        <div class="form-group">
+            <label asp-for="LevelId" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                @Html.DropDownList("LevelId", gradeLevel, new { @class = "form-control" })
+
             </div>
         </div>
         <div class="form-group">
@@ -28,6 +39,8 @@
             </div>
         </div>
         <div class="form-group">
+
+           <h5>Hide this after getting claims setup</h5>
             <label asp-for="StudentsSchool" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="StudentsSchool" class="form-control" />
@@ -48,6 +61,53 @@
                 <span asp-validation-for="lName" class="text-danger" />
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="IsActive" class="col-md-2 control-label"></label>
+            <div class="checkbox">
+                <input asp-for="IsActive" />                
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th><label asp-for="Room" class="col-md-2 control-label"></label></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in scheduleList)
+                {
+                    <tr>          
+                        <td class="hidden">
+                            <input type="hidden" name="scheduleIdList" value="@item.Id" />
+                        </td>
+                        <td>
+                            @item.Label 
+                        </td>
+                        <td>
+                            @item.From
+                        </td>
+                        <td>
+                            @item.To
+                        </td>
+                        <td>
+                            <div class="form-group">
+
+                                <div class="dropdown">            
+                                    @Html.DropDownList("spaceIdList", spaceList, "None", new {spaceId = spaceList.SelectedValues, @class = "form-control", @style = "width: 16rem; display:inline-block"})
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+
+
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
