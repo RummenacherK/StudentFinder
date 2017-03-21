@@ -14,49 +14,61 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Cli.Utils;
 using NuGet.Versioning;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
+    [Authorize]
     public class StudentsController : Controller
     {
         private readonly StudentFinderContext _context;
 
-        public StudentsController(StudentFinderContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private ISession _session => _httpContextAccessor.HttpContext.Session;
+
+        public StudentsController(StudentFinderContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        [AllowAnonymous]
+        public async Task<ActionResult> Home()
+        {
+            
+            return View();
         }
 
         // GET: Students
-        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0, int schoolId = 1)
+        public async Task<IActionResult> Index(string searchString, int? page, int spaceListFilter = 0)
         {
+            Utilities util = new Utilities();
 
-            //We need to get the ID of the user's school before we can show the specific schedule for them
-
-
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            //Get School of the User from the session
+            int schoolId = _session.GetInt32("schoolId").Value;
+                        
+            //Create Viewbags for the following data
+            var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
+            var scheduleList = _context.Schedule.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
            
             ViewBag.searchString = searchString;
-
-
-
-            //ANDREW:  PUT YOUR CODE HERE!
-            //IQueryable<StudentsViewModel> studentsVM;
-
-            //var student = new Student();
-            //var today = DateTime.Now;
-            //var currentPeriod = Utilities.CompareTimes(today);
-            var currentPeriod = 20; //This will need to be updated from Andrew's code
-
-            //END:  ANDREW SECTION
-
+           
+            //Get Today and the schedule for today
+            var today = DateTime.Now;
+           
+            var currentPeriod = CompareTimes(today, schoolId);
+           
+            //Create Viewbag of current period
             ViewBag.DisplayPeriod = _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
 
             //Select only Active Students & students from that school       
@@ -104,16 +116,18 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+            var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
-            var scheduleList = _context.Schedule.OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
+            var scheduleList = _context.Schedule.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Label).Select(a => new { id = a.Id, value = a.From, value2 = a.To }).ToList();
             ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
-            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
+            var student = await _context.Student.Where(s => s.StudentsSchool == schoolId).SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();
@@ -125,10 +139,17 @@ namespace StudentFinder.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+
+            int? schoolId = HttpContext.Session.GetInt32("schoolId");
+            if (schoolId == null)
+            {
+                return View("Home");
+            }
+
+            var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
             
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            IEnumerable<Schedule> scheduleList = _context.Schedule.Where(s => s.SchoolId == schoolId).OrderBy(x => x.From).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
@@ -149,8 +170,22 @@ namespace StudentFinder.Controllers
         {
             //Add error handling for scheduleId and SpaceId
 
+
+            int? schoolId = HttpContext.Session.GetInt32("schoolId");
+            if (schoolId == null)
+            {
+                return View("Home");
+            }
+            else
+            {
+                student.StudentsSchool = schoolId.Value;
+            }
+
+
             if (ModelState.IsValid)
             {
+
+
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 
@@ -162,7 +197,7 @@ namespace StudentFinder.Controllers
             }
 
             //add data back to view so if something goes wrong user doesnt have to reenter it
-            return View(student);
+            return View();
         }
 
         // GET: Students/Edit/5
@@ -170,7 +205,16 @@ namespace StudentFinder.Controllers
         {
            var studentId = id;
 
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+
+            if (schoolId == 0)
+            {
+                return View("Home");
+            }
+                     
             //add check method here for correct school/claims bool
+           
             if (studentId == 0)
             {
                 return NotFound();
@@ -180,18 +224,17 @@ namespace StudentFinder.Controllers
 
             ViewBag.StudentScheduleList = studentSchedule;
 
-            IEnumerable<Schedule> scheduleList = _context.Schedule.OrderBy(x => x.From).ToList();
+            IEnumerable<Schedule> scheduleList = _context.Schedule.Where(s => s.SchoolId == schoolId).OrderBy(x => x.From).ToList();
             ViewBag.scheduleViewBag = scheduleList;
 
-            var spaceList = _context.Space.OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
+            var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");           
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
             ViewBag.schoolSelectList = new SelectList(schoolList, "id", "value");
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
-
-           ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value", GetStudentLevel(studentId).Item1);
+            ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value", GetStudentLevel(studentId).Item1);
 
             var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == studentId);
 
@@ -212,12 +255,15 @@ namespace StudentFinder.Controllers
             int[] scheduleIdList,
             params int[] spaceIdList) 
         {
-            var editStudent = _context.Student.Select(x => x.Id == student.Id);
+
+            int schoolId = _session.GetInt32("schoolId").Value;
+            
+            var editStudent = _context.Student.Where(s => s.StudentsSchool == schoolId).Select(x => x.Id == student.Id);
             if (!editStudent.Any())
             {
                 return NotFound();
             }
-
+            
             if (ModelState.IsValid)
             {
                 try
@@ -255,7 +301,9 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+            var student = await _context.Student.Where(s => s.StudentsSchool == schoolId).SingleOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();
@@ -269,7 +317,9 @@ namespace StudentFinder.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == id);
+            int schoolId = _session.GetInt32("schoolId").Value;
+
+            var student = await _context.Student.Where(s => s.StudentsSchool == schoolId).SingleOrDefaultAsync(m => m.Id == id);
             _context.Student.Remove(student);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -302,22 +352,7 @@ namespace StudentFinder.Controllers
         private bool StudentExists(int id)
         {
             return _context.Student.Any(e => e.Id == id);
-        }
-
-        public void CompleteStudentSearch ()
-        {
-            var students_all = _context.StudentScheduleSpace.Select(s => new StudentsViewModel()
-            {
-                StudentId = s.Student.Id,
-                fName = s.Student.fName,
-                lName = s.Student.lName,
-                LevelId = s.Student.LevelId,
-                SpaceId = s.Space.Id,
-                Room = s.Space.Room,
-                Location = s.Space.Location
-            });
-
-        }
+        }     
 
         public List<StudentScheduleSpace> GetStudentSchedule(int Id)
         {
@@ -325,51 +360,26 @@ namespace StudentFinder.Controllers
 
             return studentSchedule;
         }
-
-        
+                
         public async void SetStudentSchedule(int studentId, int[] scheduleIdList, int[] spaceIdList)
         {
            
             var student_schedule = GetStudentSchedule(studentId);
 
-            //int i = 0;
-            //foreach (var item in student_schedule)
-            //{
-            //    var test = _context.StudentScheduleSpace.Where(x => x.StudentId == studentId && x.ScheduleId == item.ScheduleId && x.SpaceId == item.SpaceId).Single();
-                
-            //    test.ForEachAsync(a =>
-            //        {
-            //            a.SpaceId = spaceIdList[i];
-            //        });
-
-
-            //    //await _context.SaveChangesAsync();
-            //    i++;
-            //}
-
             if (student_schedule.Any())
             {
-                                
-                    int i = 0;
-                    foreach (var item in scheduleIdList)
-                    {
-                      var test = _context.StudentScheduleSpace.Where(x => x.StudentId == studentId && x.ScheduleId == item);
-                    
-                    test.ForEachAsync(a =>
-                    {
-                        a.SpaceId = spaceIdList[i];
-                    });
 
-                    
-                    //await _context.SaveChangesAsync();
-                     i++;
-                    }
+                var deleteEntry =
+                    from row in _context.StudentScheduleSpace
+                    where row.StudentId == studentId
+                    select row;
 
-                _context.SaveChanges();
+                foreach (var row in deleteEntry)
+                {
+                    _context.StudentScheduleSpace.Remove(row);
+                }
 
-
-                return;
-
+                await _context.SaveChangesAsync();
             }
             else
             {
@@ -386,8 +396,8 @@ namespace StudentFinder.Controllers
                     i++;
                 }
 
-                Task saveSchedule = _context.SaveChangesAsync();
-                await saveSchedule;
+                await _context.SaveChangesAsync();
+                
                 return;
             }
         }
@@ -395,10 +405,90 @@ namespace StudentFinder.Controllers
         public Tuple<int, string> GetStudentLevel(int studentId)
         {
             return new Tuple<int, string>(_context.Student.Where(x => x.Id == studentId).Select(x => x.LevelId).SingleOrDefault(),
-                _context.Student.Where(x => x.Id == studentId).Select(x => x.Level.GradeLevel).SingleOrDefault());
-            
+                _context.Student.Where(x => x.Id == studentId).Select(x => x.Level.GradeLevel).SingleOrDefault());            
         }
 
+        [Authorize(Roles = "User")]
+        public async Task<int> GetUserSchool()
+        {
+            var test = HttpContext.User;
+
+            if (test == null)
+            {
+                RedirectToRoute("Students", "Home");
+            }
+
+            var userClaim = _userManager.GetUserId(test);
+            // var userId = Id;
+            var user = await _userManager.FindByIdAsync(userClaim);
+            if (user == null) return 0;
+            var has_claim = false;
+            var user_claim_list = await _userManager.GetClaimsAsync(user);
+            if (user_claim_list.Count > 0)
+            {
+                //has_claim = user_claim_list[0].Type == "SchoolId";
+
+                var newUserSchool = Convert.ToInt32(user_claim_list[2].Value);
+
+                return newUserSchool;
+            }
+
+            return 0;
+        }
+
+        public int CompareTimes(DateTime today, int schoolId)
+        {
+            //using (var db = StudentFinderContext)
+            //{
+            int hours = today.Hour;
+            int min = today.Minute;
+            int total_min = (hours * 60) + min;
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
+            return schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).SingleOrDefault();
+            //}
+
+        }
 
     }
+
+
+    //public void CompleteStudentSearch ()
+    //{
+    //    var students_all = _context.StudentScheduleSpace.Select(s => new StudentsViewModel()
+    //    {
+    //        StudentId = s.Student.Id,
+    //        fName = s.Student.fName,
+    //        lName = s.Student.lName,
+    //        LevelId = s.Student.LevelId,
+    //        SpaceId = s.Space.Id,
+    //        Room = s.Space.Room,
+    //        Location = s.Space.Location
+    //    });
+
+    //}
+
+
+
+    // int i = 0;
+    // foreach (var item in scheduleIdList)
+    // {
+    //   var selectedEntry = _context.StudentScheduleSpace.Where(s => s.StudentId == studentId && s.ScheduleId == scheduleIdList[i]).Select(s => s.Id);
+
+    //     _context.StudentScheduleSpace.Remove(selectedEntry);
+
+
+    //     _context.StudentScheduleSpace.Where(s => s.StudentId == studentId && s.ScheduleId == scheduleIdList[i]) Update(
+    //         new StudentScheduleSpace
+    //         {
+    //             StudentId = studentId,
+    //             ScheduleId = scheduleIdList[i],
+    //             SpaceId = spaceIdList[i]
+    //         }
+    //         );
+    //     i++;
+    // }
+
+    //await _context.SaveChangesAsync();
+
+    // return;
 }

@@ -14,13 +14,11 @@ using StudentFinder.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using StudentFinder.Data;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
-    
-
-    [Authorize]
+      
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -31,6 +29,9 @@ namespace StudentFinder.Controllers
 
         private ApplicationDbContext _context;
         private StudentFinderContext _findercontext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private ISession _session => _httpContextAccessor.HttpContext.Session;
+
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
@@ -39,7 +40,8 @@ namespace StudentFinder.Controllers
             ISmsSender smsSender,
             ILoggerFactory loggerFactory,
             ApplicationDbContext context,
-            StudentFinderContext finderContext)
+            StudentFinderContext finderContext,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -48,6 +50,7 @@ namespace StudentFinder.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
             _context = context;
             _findercontext = finderContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #region
@@ -150,10 +153,14 @@ namespace StudentFinder.Controllers
                             await _userManager.AddClaimAsync(user, new Claim("LastName", user.lName));
                             await _userManager.AddClaimAsync(user, new Claim("SchoolId", user.SchoolId.ToString()));
                         }
+
+                        HttpContext.Session.SetInt32("schoolId", Convert.ToInt32(user.SchoolId));
+
                     }
 
                     _logger.LogInformation(1, "User logged in.");
-                    return RedirectToLocal(returnUrl);
+
+                   return RedirectToLocal(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -590,10 +597,38 @@ namespace StudentFinder.Controllers
                 return Redirect(returnUrl);
             }
             else
-            {
-                return RedirectToAction(nameof(StudentFinder.Controllers.StudentsController.Index), "Index");
+            {                
+                return RedirectToAction(nameof(StudentsController), "Index");
             }
         }
+
+        //[Authorize(Roles = "User")]
+        //public async Task<int> GetUserSchool()
+        //{
+        //    var test = HttpContext.User;
+
+        //    if (test == null)
+        //    {
+        //        RedirectToRoute("Students", "Home");
+        //    }
+
+        //    var userClaim = _userManager.GetUserId(test);
+        //    // var userId = Id;
+        //    var user = await _userManager.FindByIdAsync(userClaim);
+        //    if (user == null) return 0;
+        //    var has_claim = false;
+        //    var user_claim_list = await _userManager.GetClaimsAsync(user);
+        //    if (user_claim_list.Count > 0)
+        //    {
+        //        //has_claim = user_claim_list[0].Type == "SchoolId";
+
+        //        var newUserSchool = Convert.ToInt32(user_claim_list[2].Value);
+
+        //        return newUserSchool;
+        //    }
+
+        //    return 0;
+        //}
 
         #endregion
     }
