@@ -26,22 +26,36 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Students" asp-action="Index" class="navbar-brand">StudentFinder</a>
+                @if (User.Identity.IsAuthenticated == true)
+                {
+                    <a asp-area="" asp-controller="Students" asp-action="Index" class="navbar-brand">StudentFinder</a>
+                }
+                else
+                {
+                    <a asp-area="" asp-controller="Students" asp-action="Home" class="navbar-brand">StudentFinder</a>
+                }
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Students" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Students" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Students" asp-action="Contact">Contact</a></li>
-                    <li><a asp-area="" asp-controller="Students" asp-action="Index">Students</a></li>
-                    <li><a asp-area="" asp-controller="Spaces" asp-action="Index">Spaces</a></li>
-                    <li><a asp-area="" asp-controller="Schedules" asp-action="Index">Schedule</a></li>
-                    <li><a asp-area="" asp-controller="Schools" asp-action="Index">Schools</a></li>
+                    @if (User.Identity.IsAuthenticated == true)
+                    {
+                        <li><a asp-area="" asp-controller="Students" asp-action="Index">Students</a></li>
+                        <li><a asp-area="" asp-controller="Spaces" asp-action="Index">Spaces</a></li>
+                        if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                        {
+                        <li><a asp-area="" asp-controller="Schedules" asp-action="Index">Schedule</a></li>
+                        }
+                    }
                     @if (User.Identity.IsAuthenticated == true && User.IsInRole("SuperAdmin"))
                     {
-                    <li><a asp-area="" asp-controller="ManageRoles" asp-action="Index">Roles</a></li>
-                    <li><a asp-area="" asp-controller="ManageUsers" asp-action="Index">Users</a></li>
+                        <li><a asp-area="" asp-controller="Schools" asp-action="Index">Schools</a></li>
+                        <li><a asp-area="" asp-controller="ManageRoles" asp-action="Index">Roles</a></li>
+                        <li><a asp-area="" asp-controller="ManageUsers" asp-action="Index">Users</a></li>
                     }
+                    
 
 
 

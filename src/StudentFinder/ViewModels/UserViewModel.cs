@@ -19,6 +19,9 @@ namespace StudentFinder.ViewModels
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Display(Name = "User Role")]
+        public string RoleNames { get; set; }
+
         public string SchoolId { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using StudentFinder.ViewModels;
 using StudentFinder.Infrastructure;
 using System.Collections;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Cli.Utils;
 using NuGet.Versioning;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
+    [Authorize]
     public class SchedulesController : Controller
     {
         private readonly StudentFinderContext _context;

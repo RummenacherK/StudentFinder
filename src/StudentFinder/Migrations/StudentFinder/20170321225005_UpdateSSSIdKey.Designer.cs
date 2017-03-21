@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using StudentFinder.Data;
 
-namespace StudentFinder.Migrations
+namespace StudentFinder.Migrations.StudentFinder
 {
     [DbContext(typeof(StudentFinderContext))]
-    [Migration("20170312030107_test")]
-    partial class test
+    [Migration("20170321225005_UpdateSSSIdKey")]
+    partial class UpdateSSSIdKey
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -17,19 +17,31 @@ namespace StudentFinder.Migrations
                 .HasAnnotation("ProductVersion", "1.0.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("StudentFinder.Models.Level", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("GradeLevel");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Level");
+                });
+
             modelBuilder.Entity("StudentFinder.Models.Schedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("From")
-                        .IsRequired();
+                    b.Property<int>("From");
 
                     b.Property<string>("Label")
                         .IsRequired();
 
-                    b.Property<string>("To")
-                        .IsRequired();
+                    b.Property<int>("SchoolId");
+
+                    b.Property<int>("To");
 
                     b.HasKey("Id");
 
@@ -84,6 +96,8 @@ namespace StudentFinder.Migrations
                     b.Property<string>("Room")
                         .IsRequired();
 
+                    b.Property<int>("SchoolId");
+
                     b.HasKey("Id");
 
                     b.ToTable("Space");
@@ -94,12 +108,14 @@ namespace StudentFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("GradeLevel")
+                    b.Property<bool>("IsActive");
+
+                    b.Property<int>("LevelId");
+
+                    b.Property<string>("StudentSchoolId")
                         .IsRequired();
 
-                    b.Property<int>("SchoolId");
-
-                    b.Property<int>("StudentId");
+                    b.Property<int>("StudentsSchool");
 
                     b.Property<string>("fName")
                         .IsRequired();
@@ -109,7 +125,56 @@ namespace StudentFinder.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LevelId");
+
                     b.ToTable("Student");
+                });
+
+            modelBuilder.Entity("StudentFinder.Models.StudentScheduleSpace", b =>
+                {
+                    b.Property<int>("StudentId");
+
+                    b.Property<int>("ScheduleId");
+
+                    b.Property<int>("SpaceId");
+
+                    b.Property<int>("Id");
+
+                    b.HasKey("StudentId", "ScheduleId", "SpaceId");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("SpaceId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentScheduleSpace");
+                });
+
+            modelBuilder.Entity("StudentFinder.Models.Student", b =>
+                {
+                    b.HasOne("StudentFinder.Models.Level", "Level")
+                        .WithMany("Student")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StudentFinder.Models.StudentScheduleSpace", b =>
+                {
+                    b.HasOne("StudentFinder.Models.Schedule", "Schedule")
+                        .WithMany("StudentScheduleSpace")
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("StudentFinder.Models.Space", "Space")
+                        .WithMany("StudentScheduleSpace")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("StudentFinder.Models.Student", "Student")
+                        .WithMany("StudentScheduleSpace")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
         }
     }

@@ -5,7 +5,7 @@ using StudentFinder.Data;
 using StudentFinder.Infrastructure;
 using StudentFinder.Services;
 using StudentFinder.ViewModels;
-using StudentFinder.Migrations;
+//using StudentFinder.Migrations;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
