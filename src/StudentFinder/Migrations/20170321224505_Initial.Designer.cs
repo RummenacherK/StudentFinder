@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using StudentFinder.Data;
 
-namespace StudentFinder.Data.Migrations
+namespace StudentFinder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170319174840_IdentityUpdate")]
-    partial class IdentityUpdate
+    [Migration("20170321224505_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -154,7 +154,7 @@ namespace StudentFinder.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<int>("SchoolId");
+                    b.Property<string>("SchoolId");
 
                     b.Property<string>("SecurityStamp");
 

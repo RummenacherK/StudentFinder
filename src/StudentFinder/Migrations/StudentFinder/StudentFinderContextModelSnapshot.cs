@@ -5,31 +5,42 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using StudentFinder.Data;
 
-namespace StudentFinder.Migrations
+namespace StudentFinder.Migrations.StudentFinder
 {
     [DbContext(typeof(StudentFinderContext))]
-    [Migration("20170312235507_AddedIsActiveStudent")]
-    partial class AddedIsActiveStudent
+    partial class StudentFinderContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("StudentFinder.Models.Level", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("GradeLevel");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Level");
+                });
 
             modelBuilder.Entity("StudentFinder.Models.Schedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("From")
-                        .IsRequired();
+                    b.Property<int>("From");
 
                     b.Property<string>("Label")
                         .IsRequired();
 
-                    b.Property<string>("To")
-                        .IsRequired();
+                    b.Property<int>("SchoolId");
+
+                    b.Property<int>("To");
 
                     b.HasKey("Id");
 
@@ -84,6 +95,8 @@ namespace StudentFinder.Migrations
                     b.Property<string>("Room")
                         .IsRequired();
 
+                    b.Property<int>("SchoolId");
+
                     b.HasKey("Id");
 
                     b.ToTable("Space");
@@ -94,10 +107,9 @@ namespace StudentFinder.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("GradeLevel")
-                        .IsRequired();
-
                     b.Property<bool>("IsActive");
+
+                    b.Property<int>("LevelId");
 
                     b.Property<string>("StudentSchoolId")
                         .IsRequired();
@@ -112,6 +124,8 @@ namespace StudentFinder.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LevelId");
+
                     b.ToTable("Student");
                 });
 
@@ -123,6 +137,8 @@ namespace StudentFinder.Migrations
 
                     b.Property<int>("SpaceId");
 
+                    b.Property<int>("Id");
+
                     b.HasKey("StudentId", "ScheduleId", "SpaceId");
 
                     b.HasIndex("ScheduleId");
@@ -132,6 +148,14 @@ namespace StudentFinder.Migrations
                     b.HasIndex("StudentId");
 
                     b.ToTable("StudentScheduleSpace");
+                });
+
+            modelBuilder.Entity("StudentFinder.Models.Student", b =>
+                {
+                    b.HasOne("StudentFinder.Models.Level", "Level")
+                        .WithMany("Student")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("StudentFinder.Models.StudentScheduleSpace", b =>

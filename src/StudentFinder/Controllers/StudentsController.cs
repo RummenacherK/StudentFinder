@@ -195,10 +195,9 @@ namespace StudentFinder.Controllers
             {
                 return View("Home");
             }
-            else
-            {
+            
                 student.StudentsSchool = schoolId.Value;
-            }
+            
 
 
             if (ModelState.IsValid)
@@ -457,8 +456,11 @@ namespace StudentFinder.Controllers
             int hours = today.Hour;
             int min = today.Minute;
             int total_min = (hours * 60) + min;
-            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
-            if(schedule == null)
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x);
+            var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s).FirstOrDefault();
+
+
+            if (schedule.Any())
             {
                 return 0;
             }
@@ -470,7 +472,6 @@ namespace StudentFinder.Controllers
             }
             return currentSchedule;
             
-
         }
 
     }

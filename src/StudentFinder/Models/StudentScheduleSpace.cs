@@ -9,6 +9,7 @@ namespace StudentFinder.Models
     public class StudentScheduleSpace
     {
         [Key]
+        [Required]
         public int Id { get; set; }
 
         public int StudentId { get; set; }
