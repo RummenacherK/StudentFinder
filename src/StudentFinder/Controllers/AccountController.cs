@@ -154,7 +154,8 @@ namespace StudentFinder.Controllers
                             await _userManager.AddClaimAsync(user, new Claim("SchoolId", user.SchoolId.ToString()));
                         }
 
-                        
+                        HttpContext.Session.SetInt32("schoolId", Convert.ToInt32(user.SchoolId));
+
                     }
 
                     _logger.LogInformation(1, "User logged in.");
