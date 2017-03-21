@@ -44,8 +44,10 @@
                     {
                         <li><a asp-area="" asp-controller="Students" asp-action="Index">Students</a></li>
                         <li><a asp-area="" asp-controller="Spaces" asp-action="Index">Spaces</a></li>
+                        if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin"))
+                        {
                         <li><a asp-area="" asp-controller="Schedules" asp-action="Index">Schedule</a></li>
-                        
+                        }
                     }
                     @if (User.Identity.IsAuthenticated == true && User.IsInRole("SuperAdmin"))
                     {

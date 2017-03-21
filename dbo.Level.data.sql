@@ -1,0 +1,16 @@
+SET IDENTITY_INSERT [dbo].[Level] ON
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (1, N'Pre-Kindergarden')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (2, N'Kindergarden')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (3, N'1st')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (4, N'2nd')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (5, N'3rd')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (6, N'4th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (7, N'5th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (8, N'6th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (9, N'7th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (10, N'8th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (11, N'9th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (12, N'10th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (13, N'11th')
+INSERT INTO [dbo].[Level] ([Id], [GradeLevel]) VALUES (14, N'12th')
+SET IDENTITY_INSERT [dbo].[Level] OFF

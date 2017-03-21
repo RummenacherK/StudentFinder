@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace StudentFinder.Data.Migrations
+namespace StudentFinder.Migrations.StudentFinder
 {
-    public partial class initialAuthenticationBuild : Migration
+    public partial class UpdateSSSIdKey : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
