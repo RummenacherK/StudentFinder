@@ -28,6 +28,7 @@ namespace StudentFinder.Controllers
         public async Task<ActionResult> Index(int? page)
         {
 
+            
 
             var Users = db_context.Users.Select(x => x);
 
@@ -37,7 +38,7 @@ namespace StudentFinder.Controllers
                 lName = u.lName,
                 fName = u.fName,
                 SchoolId = u.SchoolId,
-                Email = u.Email
+                Email = u.Email,
                 
             });
 
