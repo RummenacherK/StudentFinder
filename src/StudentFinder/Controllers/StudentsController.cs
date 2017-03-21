@@ -361,7 +361,7 @@ namespace StudentFinder.Controllers
             return studentSchedule;
         }
                 
-        public async void SetStudentSchedule(int studentId, int[] scheduleIdList, int[] spaceIdList)
+        public void SetStudentSchedule(int studentId, int[] scheduleIdList, int[] spaceIdList)
         {
            
             var student_schedule = GetStudentSchedule(studentId);
@@ -379,10 +379,10 @@ namespace StudentFinder.Controllers
                     _context.StudentScheduleSpace.Remove(row);
                 }
 
-                await _context.SaveChangesAsync();
+                 _context.SaveChanges();
             }
-            else
-            {
+            //else
+            //{
                 int i = 0;
                 foreach (var item in scheduleIdList)
                 {
@@ -396,10 +396,10 @@ namespace StudentFinder.Controllers
                     i++;
                 }
 
-                await _context.SaveChangesAsync();
+                 _context.SaveChanges();
                 
                 return;
-            }
+            //}
         }
 
         public Tuple<int, string> GetStudentLevel(int studentId)

@@ -273,7 +273,7 @@ namespace StudentFinder.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
-            return RedirectToAction(nameof(StudentFinder.Controllers.StudentsController.Index), "/");
+            return RedirectToAction(nameof(StudentsController.Index), "Students");
         }
 
         //
@@ -598,7 +598,7 @@ namespace StudentFinder.Controllers
             }
             else
             {                
-                return RedirectToAction(nameof(StudentsController), "Index");
+                return RedirectToAction(nameof(StudentsController.Index), "Students");
             }
         }
 
