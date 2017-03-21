@@ -444,7 +444,17 @@ namespace StudentFinder.Controllers
             int min = today.Minute;
             int total_min = (hours * 60) + min;
             var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
-            return schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).SingleOrDefault();
+            if(schedule == null)
+            {
+                return 0;
+            }
+
+            var currentSchedule = schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).FirstOrDefault();
+            if (currentSchedule == 0)
+            {
+                return schedule.Where(s => s.To >= s.From).Select(s => s.Id).FirstOrDefault();
+            }
+            return currentSchedule;
             //}
 
         }
