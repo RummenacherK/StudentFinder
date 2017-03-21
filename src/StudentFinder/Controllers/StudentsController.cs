@@ -39,10 +39,7 @@ namespace StudentFinder.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> Home()
         {
-            int schoolId = await GetUserSchool();
-
-            HttpContext.Session.SetInt32("schoolId", schoolId);
-
+            
             return View();
         }
 
@@ -51,18 +48,9 @@ namespace StudentFinder.Controllers
         {
             Utilities util = new Utilities();
 
-            //Get School of the User:  See method at bottom of controller
-            int schoolId = await GetUserSchool();
+            //Get School of the User from the session
+            int schoolId = _session.GetInt32("schoolId").Value;
                         
-            HttpContext.Session.SetInt32("schoolId", schoolId);
-            //We need to get the ID of the user's school before we can show the specific schedule for them
-            //var user = _userManager.GetUserId(test); /*.GetUserAsync(test);*/
-
-
-
-            //int schoolId = _session.GetInt32("schoolId").Value;
-                  
-            
             //Create Viewbags for the following data
             var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
@@ -78,7 +66,7 @@ namespace StudentFinder.Controllers
             //Get Today and the schedule for today
             var today = DateTime.Now;
            
-            var currentPeriod = util.CompareTimes(today, schoolId);
+            var currentPeriod = CompareTimes(today, schoolId);
            
             //Create Viewbag of current period
             ViewBag.DisplayPeriod = _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
@@ -158,7 +146,6 @@ namespace StudentFinder.Controllers
                 return View("Home");
             }
 
-
             var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
             ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
             
@@ -225,12 +212,9 @@ namespace StudentFinder.Controllers
             {
                 return View("Home");
             }
-           
-          
-            
+                     
             //add check method here for correct school/claims bool
            
-
             if (studentId == 0)
             {
                 return NotFound();
@@ -412,8 +396,8 @@ namespace StudentFinder.Controllers
                     i++;
                 }
 
-                Task saveSchedule = _context.SaveChangesAsync();
-                await saveSchedule;
+                await _context.SaveChangesAsync();
+                
                 return;
             }
         }
@@ -451,6 +435,20 @@ namespace StudentFinder.Controllers
 
             return 0;
         }
+
+        public int CompareTimes(DateTime today, int schoolId)
+        {
+            //using (var db = StudentFinderContext)
+            //{
+            int hours = today.Hour;
+            int min = today.Minute;
+            int total_min = (hours * 60) + min;
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
+            return schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).SingleOrDefault();
+            //}
+
+        }
+
     }
 
 

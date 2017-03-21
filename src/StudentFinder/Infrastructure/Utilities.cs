@@ -44,8 +44,8 @@ namespace StudentFinder.Infrastructure
                 int hours = today.Hour;
                 int min = today.Minute;
                 int total_min = (hours * 60) + min;
-                var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
-                return schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
+                var schedule = _context.Schedule.Select(x => x).ToList();
+                return schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).SingleOrDefault();
             //}
 
         }
