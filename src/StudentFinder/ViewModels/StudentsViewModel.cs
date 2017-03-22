@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace StudentFinder.ViewModels
         public string StudentSchoolId { get; set; }
         public bool IsActive { get; set; }
 
+        [Display(Name = "Grade")]
         public int LevelId { get; set; }
 
         //GradeLevel Description
@@ -24,6 +26,7 @@ namespace StudentFinder.ViewModels
         public int StudentsSchool { get; set; }
         
         //Schedule Id
+        [Display(Name ="Schedule")]
         public int ScheduleId { get; set; }
 
         //Space Info

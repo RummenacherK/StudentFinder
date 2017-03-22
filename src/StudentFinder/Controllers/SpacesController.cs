@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
+    [Authorize]
     public class SpacesController : Controller
     {
         private readonly StudentFinderContext _context;
