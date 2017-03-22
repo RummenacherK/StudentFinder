@@ -5,7 +5,6 @@ using StudentFinder.Data;
 using StudentFinder.Infrastructure;
 using StudentFinder.Services;
 using StudentFinder.ViewModels;
-//using StudentFinder.Migrations;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
@@ -37,52 +36,43 @@ namespace StudentFinder.Infrastructure
 
         // Get Schedule data and compare to current time
 
-        public int CompareTimes(DateTime today, int schoolId)
+        public Tuple<int, string> CompareTimes(DateTime today, int schoolId)
         {
-            //using (var db = StudentFinderContext)
-            //{
-                int hours = today.Hour;
-                int min = today.Minute;
-                int total_min = (hours * 60) + min;
-                var schedule = _context.Schedule.Select(x => x).ToList();
-                return schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).SingleOrDefault();
-            //}
+            string period_label = string.Empty;
+            int hours = today.Hour;
+            int min = today.Minute;
+            int total_min = (hours * 60) + min;
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
+            var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
+            // We found a period
+            if (period > 0)
+            {
+                period_label = _context.Schedule.Where(x => x.Id == period).Select(x => x.Label).SingleOrDefault();
 
+                return new Tuple<int, string>(period, period_label);               
+            }
+            else // No period found above, add 15 min
+            {
+                period_label = "Inbetween Periods, Next Period is ";
+
+                total_min = total_min + 15;
+                var period2 = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
+
+                if (period2 > 0)  // we have a period after adding 15 min
+                {
+                    period_label = period_label + _context.Schedule.Where(x => x.Id == period).Select(x => x.Label).SingleOrDefault();
+
+                    return new Tuple<int, string>(period2, period_label);
+                }
+                else // no period found
+                {
+                    period_label = "No more periods for today.";
+
+                    // end of day
+                    return new Tuple<int, string>(-1, period_label);
+                }
+            }              
         }
-
-        //[Authorize(Roles = "User")]
-        //public async Task<int> GetUserSchool(ClaimsPrincipal Id)
-        //{
-          
-        //    var userClaim = _userManager.GetUserId(Id);
-        //   // var userId = Id;
-        //    var user = await _userManager.FindByIdAsync(userClaim);
-        //    if (user != null)
-        //    {
-        //        var has_claim = false;
-        //        var user_claim_list = await _userManager.GetClaimsAsync(user);
-        //        if (user_claim_list.Count > 0)
-        //        {
-        //            has_claim = user_claim_list[0].Type == "SchoolId";
-
-        //            var test = Convert.ToInt32(user_claim_list[0].Value);
-
-        //            return test;
-        //        }
-
-
-        //        //if (!has_claim)
-        //        //{
-        //        //   await _userManager.AddClaimAsync(user, new Claim("SchoolId", user.SchoolId.ToString()));
-        //        //}
-        //    }
-
-        //    //var userSchool = user.Claims;
-
-        //    return 0;
-
-        //}
-
     }
 }         
 
