@@ -79,8 +79,8 @@ namespace StudentFinder.Controllers
                 var currentPeriod = CompareTimes(today, schoolId);
 
                 //Create Viewbag of current period
-                ViewBag.DisplayPeriod =
-                    _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
+                ViewBag.DisplayPeriod = currentPeriod.Item2;
+               //     _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
 
                 //Select only Active Students & students from that school       
                 var activeStudents =
@@ -88,7 +88,7 @@ namespace StudentFinder.Controllers
                         a => a.Student.IsActive == true && a.Student.StudentsSchool == schoolId).Select(x => x);
 
                 //Select entry on SSS table which matches the current time Period
-                var s_all = activeStudents.Where(s => s.ScheduleId == currentPeriod).Select(x => x);
+                var s_all = activeStudents.Where(s => s.ScheduleId == currentPeriod.Item1).Select(x => x);
 
                 if (spaceListFilter > 0)
                 {
@@ -450,29 +450,67 @@ namespace StudentFinder.Controllers
             return 0;
         }
 
-        public int CompareTimes(DateTime today, int schoolId)
+        public Tuple<int, string> CompareTimes(DateTime today, int schoolId)
         {
-            
+            string period_label = string.Empty;
             int hours = today.Hour;
             int min = today.Minute;
             int total_min = (hours * 60) + min;
-            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x);
-            var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s).FirstOrDefault();
-
-
-            if (schedule.Any())
+            var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x).ToList();
+            var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
+            // We found a period
+            if (period > 0)
             {
-                return 0;
-            }
+                period_label = _context.Schedule.Where(x => x.Id == period).Select(x => x.Label).SingleOrDefault();
 
-            var currentSchedule = schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).FirstOrDefault();
-            if (currentSchedule == 0)
-            {
-                return schedule.Where(s => s.To >= s.From).Select(s => s.Id).FirstOrDefault();
+                return new Tuple<int, string>(period, period_label);
             }
-            return currentSchedule;
-            
+            else // No period found above, add 15 min
+            {
+                period_label = "Inbetween Periods, Next Period is ";
+
+                total_min = total_min + 15;
+                var period2 = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s.Id).SingleOrDefault();
+
+                if (period2 > 0)  // we have a period after adding 15 min
+                {
+                    period_label = period_label + _context.Schedule.Where(x => x.Id == period).Select(x => x.Label).SingleOrDefault();
+
+                    return new Tuple<int, string>(period2, period_label);
+                }
+                else // no period found
+                {
+                    period_label = "No more periods for today.";
+
+                    // end of day
+                    return new Tuple<int, string>(-1, period_label);
+                }
+            }
         }
+
+        //public int CompareTimes(DateTime today, int schoolId)
+        //{
+
+        //    int hours = today.Hour;
+        //    int min = today.Minute;
+        //    int total_min = (hours * 60) + min;
+        //    var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x);
+        //    var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s).FirstOrDefault();
+
+
+        //    if (schedule.Any())
+        //    {
+        //        return 0;
+        //    }
+
+        //    var currentSchedule = schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).FirstOrDefault();
+        //    if (currentSchedule == 0)
+        //    {
+        //        return schedule.Where(s => s.To >= s.From).Select(s => s.Id).FirstOrDefault();
+        //    }
+        //    return currentSchedule;
+
+        //}
 
     }
 }
