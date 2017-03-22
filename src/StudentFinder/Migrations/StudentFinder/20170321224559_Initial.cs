@@ -102,14 +102,16 @@ namespace StudentFinder.Migrations.StudentFinder
                 name: "StudentScheduleSpace",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     StudentId = table.Column<int>(nullable: false),
                     ScheduleId = table.Column<int>(nullable: false),
                     SpaceId = table.Column<int>(nullable: false),
-                    Id = table.Column<int>(nullable: false)
+                    
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentScheduleSpace", x => new { x.StudentId, x.ScheduleId, x.SpaceId });
+                    table.PrimaryKey("PK_StudentScheduleSpace", x => x.Id);
                     table.ForeignKey(
                         name: "FK_StudentScheduleSpace_Schedule_ScheduleId",
                         column: x => x.ScheduleId,
