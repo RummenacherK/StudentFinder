@@ -18,8 +18,8 @@ namespace StudentFinder.Data
        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<StudentScheduleSpace>()
-                .HasKey(s => new { s.StudentId, s.ScheduleId, s.SpaceId });
+            //modelBuilder.Entity<StudentScheduleSpace>()
+            //    .HasKey(s => new { s.StudentId, s.ScheduleId, s.SpaceId });
             
         }
 
