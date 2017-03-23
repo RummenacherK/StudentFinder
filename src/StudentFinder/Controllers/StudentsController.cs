@@ -238,6 +238,8 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
+            //var student = new Student();
+
             IEnumerable<StudentScheduleSpace> studentSchedule = GetStudentSchedule(studentId).ToList();
 
             ViewBag.StudentScheduleList = studentSchedule;
