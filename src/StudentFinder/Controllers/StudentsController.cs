@@ -79,7 +79,6 @@ namespace StudentFinder.Controllers
 
                 //Create Viewbag of current period
                 ViewBag.DisplayPeriod = currentPeriod.Item2;
-               //     _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
 
                 //Select only Active Students & students from that school       
                 var activeStudents =
@@ -134,6 +133,8 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
+            int Id = id.GetValueOrDefault();
+
             int schoolId = _session.GetInt32("schoolId").Value;
 
             var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
@@ -150,8 +151,27 @@ namespace StudentFinder.Controllers
             {
                 return NotFound();
             }
+            var space = new Space();            
+            var s_all = _context.Student.Where(s => s.StudentsSchool == schoolId).Select(x => x);
+            var selectedStudents = s_all.Select(s => new StudentsViewModel()
+            {
+                StudentId = s.Id,
+                StudentsSchool = s.StudentsSchool,
+                StudentSchoolId = s.StudentSchoolId,
+                fName = s.fName,
+                lName = s.lName,
+                LevelId = s.LevelId,
+                IsActive = s.IsActive,
+                SpaceId = s.Id,
+                Room = space.Room,
+                Location = space.Location,
+                GradeLevel = s.Level.GradeLevel
 
-            return View(student);
+            });
+
+            var displayStudent = selectedStudents.Where(s => s.StudentId == Id).Select(x => x).FirstOrDefault();
+
+            return View(displayStudent);
         }
 
         // GET: Students/Create
@@ -194,15 +214,11 @@ namespace StudentFinder.Controllers
             {
                 return View("Home");
             }
-            
-                student.StudentsSchool = schoolId.Value;
-            
 
-
+            student.StudentsSchool = schoolId.Value;
+            
             if (ModelState.IsValid)
             {
-
-
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 
@@ -220,7 +236,7 @@ namespace StudentFinder.Controllers
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-           var studentId = id;
+            var studentId = id;
 
             int schoolId = _session.GetInt32("schoolId").Value;
 
@@ -229,9 +245,9 @@ namespace StudentFinder.Controllers
             {
                 return View("Home");
             }
-                     
+
             //add check method here for correct school/claims bool
-           
+
             if (studentId == 0)
             {
                 return NotFound();
@@ -247,43 +263,22 @@ namespace StudentFinder.Controllers
             ViewBag.scheduleViewBag = scheduleList;
 
             var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
-            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");           
+            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
             ViewBag.schoolSelectList = new SelectList(schoolList, "id", "value");
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value", GetStudentLevel(studentId).Item1);
-            
-            var s_all = _context.StudentScheduleSpace.Where(s => s.Student.StudentsSchool == schoolId).ToList();
-            var student = s_all.Where(m => m.Id == studentId).SingleOrDefault();
+
+            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == studentId);
+
             if (student == null)
             {
                 return NotFound();
             }
 
-            var selectedStudents = s_all.Select(s => new StudentsViewModel()
-            {
-                StudentId = s.Student.Id,
-                StudentsSchool = s.Student.StudentsSchool,
-                StudentSchoolId = s.Student.StudentSchoolId,
-                fName = s.Student.fName,
-                lName = s.Student.lName,
-                LevelId = s.Student.LevelId,
-                IsActive = s.Student.IsActive,
-                SpaceId = s.Space.Id,
-                Room = s.Space.Room,
-                Location = s.Space.Location,
-                GradeLevel = s.Student.Level.GradeLevel
-
-            });
-
-            var displayStudent = selectedStudents.Where(s => s.StudentId == student.Id).FirstOrDefault();
-
-            return View(displayStudent);
-
-
-            
+            return View(student);
         }
 
         // POST: Students/Edit/5
@@ -355,12 +350,7 @@ namespace StudentFinder.Controllers
                 fName = student.fName,
                 lName = student.lName,
                 LevelId = student.LevelId,
-                IsActive = student.IsActive,
-                //SpaceId = space.Id,
-                //Room = space.Room,
-                //Location = space.Location,
-                //GradeLevel = student.Level.GradeLevel
-
+                IsActive = student.IsActive,  
             };
 
             return View(selectedStudent);
@@ -443,29 +433,12 @@ namespace StudentFinder.Controllers
                 ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
 
                 ViewBag.searchString = searchString;
-
-                //Get Today and the schedule for today
-                //var today = DateTime.Now;
-
-                //var currentPeriod = CompareTimes(today, schoolId);
-
-                //Create Viewbag of current period
-                //ViewBag.DisplayPeriod = currentPeriod.Item2;
-                //     _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
-
-                //Select only Active Students & students from that school       
+                
+                //Select All students from the school                
                 var s_all =
                     _context.Student.Where(a =>
                         a.StudentsSchool == schoolId).Select(x => x);
-
-                //Select entry on SSS table which matches the current time Period
-                //var s_all = allStudents.Where(s => s.ScheduleId == currentPeriod.Item1).Select(x => x);
-
-                //if (spaceListFilter > 0)
-                //{
-                //    s_all = s_all.Where(s => s.SpaceId == spaceListFilter);
-                //}
-
+                               
                 if (!string.IsNullOrEmpty(searchString))
                 {
                     s_all =
@@ -500,9 +473,7 @@ namespace StudentFinder.Controllers
             return Home();
 
         }
-
-
-
+        
         [AllowAnonymous]
         public IActionResult About()
         {
@@ -631,31 +602,6 @@ namespace StudentFinder.Controllers
                     return new Tuple<int, string>(-1, period_label);
                 }
             }
-        }
-
-        //public int CompareTimes(DateTime today, int schoolId)
-        //{
-
-        //    int hours = today.Hour;
-        //    int min = today.Minute;
-        //    int total_min = (hours * 60) + min;
-        //    var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x);
-        //    var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s).FirstOrDefault();
-
-
-        //    if (schedule.Any())
-        //    {
-        //        return 0;
-        //    }
-
-        //    var currentSchedule = schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).FirstOrDefault();
-        //    if (currentSchedule == 0)
-        //    {
-        //        return schedule.Where(s => s.To >= s.From).Select(s => s.Id).FirstOrDefault();
-        //    }
-        //    return currentSchedule;
-
-        //}
-
+        }  
     }
 }

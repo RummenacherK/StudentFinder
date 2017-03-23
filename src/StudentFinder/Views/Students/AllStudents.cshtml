@@ -23,7 +23,7 @@
     <thead>
         <tr>
             <th colspan="2" class="text-justify">
-                <form method="post" id="SearchString" action="@Url.Action("Index", "Students")">
+                <form method="post" id="SearchString" action="@Url.Action("AllStudents", "Students")">
                     <div class="form-group no-color has-feedback">
                         <input class="form-control hasclear" type="text" id="SearchString" name="SearchString" value="" placeholder="@ViewBag.searchString" />
                         <span class="clearer gliphyicon gliphyicon-remove form-control-feedback"></span>
@@ -31,7 +31,7 @@
                 </form>
             </th>
             <th>
-                <form method="post" id="spaceFilter" action="@Url.Action("Index", "Students")">
+                <form method="post" id="spaceFilter" action="@Url.Action("AllStudents", "Students")">
                     @Html.DropDownList("spaceListFilter", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                 </form>
             </th>
@@ -67,6 +67,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.StudentId)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.lName)
                 </td>
@@ -82,9 +85,15 @@
                 <td>
                     @(item.IsActive?"Yes":"No")
                 </td>
-                <td class="text-center">
-                    <a class="btn btn-info btn-control" asp-action="Details" asp-route-id="@item.StudentId">Details</a>
-                    @if (User.IsInRole("Admin,SuperAdmin"))
+                <td class="col-md-3">
+
+                    <a class="btn btn-info" asp-action="Details" asp-route-id="@item.StudentId">Details</a>
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-info btn-warning" asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
+                        <a class="btn btn-info btn-danger" asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+                    }
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("SuperAdmin"))
                     {
                         <a class="btn btn-info btn-warning" asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
                         <a class="btn btn-info btn-danger" asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
