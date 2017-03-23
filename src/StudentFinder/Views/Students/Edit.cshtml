@@ -20,8 +20,9 @@
         <div class="form-group">
             <label asp-for="LevelId" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                @Html.DropDownList("LevelId", gradeLevel, new { @class = "form-control" })
-
+                @*@Html.DropDownList("LevelId", gradeLevel, new { @class = "form-control" })*@
+                @*@Html.DropDownListFor(m => m.LevelId, new SelectList(ViewBag.gradeLevelSelectList))*@
+                @Html.DropDownListFor(model => model.LevelId, ViewBag.gradeLevelSelectList as SelectList )
             </div>
         </div>
         <div class="form-group">
