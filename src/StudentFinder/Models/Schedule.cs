@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Attributes;
 
+
 namespace StudentFinder.Models
 {
    // [Validator(typeof(ScheduleValidator))]
@@ -27,13 +28,4 @@ namespace StudentFinder.Models
         public int To { get; set; }
 
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }        
-    }
-
-    //public class ScheduleValidator : AbstractValidator<Schedule>
-    //{
-    //    public ScheduleValidator()
-    //    {
-    //        RuleFor(s => s.To).GreaterThan(s => s.From);
-    //    }
-    //}
 }

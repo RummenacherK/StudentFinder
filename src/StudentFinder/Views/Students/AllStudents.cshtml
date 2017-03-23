@@ -67,6 +67,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.StudentId)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.lName)
                 </td>
@@ -83,8 +86,14 @@
                     @(item.IsActive?"Yes":"No")
                 </td>
                 <td class="text-center">
-                    <a class="btn btn-info btn-control" asp-action="Details" asp-route-id="@item.StudentId">Details</a>
-                    @if (User.IsInRole("Admin,SuperAdmin"))
+
+                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a>
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-info btn-warning" asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
+                        <a class="btn btn-info btn-danger" asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+                    }
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("SuperAdmin"))
                     {
                         <a class="btn btn-info btn-warning" asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
                         <a class="btn btn-info btn-danger" asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>

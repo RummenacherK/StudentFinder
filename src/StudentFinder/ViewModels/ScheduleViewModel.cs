@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Attributes;
 
+
 namespace StudentFinder.ViewModels
 {
    // [Validator(typeof(ScheduleViewModelValidator))]
@@ -42,12 +43,6 @@ namespace StudentFinder.ViewModels
                 return TimeSpan.FromMinutes((double)To);
             }         
         }
-    }
-    //public class ScheduleViewModelValidator : AbstractValidator<ScheduleViewModel>
-    //{
-    //    public ScheduleViewModelValidator()
-    //    {
-    //        RuleFor(s => s.To).GreaterThan(s => s.From);
-    //    }
-    //}
+    }    
+
 }
