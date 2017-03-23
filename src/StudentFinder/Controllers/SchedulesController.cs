@@ -104,6 +104,11 @@ namespace StudentFinder.Controllers
             schedule.To = (toHour * 60) + toMinute;
 
             schedule.SchoolId =  _session.GetInt32("schoolId").Value;
+
+            if(! ModelState.IsValid)
+            {
+                return View("Create", schedule);
+            }
             
             if (ModelState.IsValid)
              {
