@@ -254,15 +254,36 @@ namespace StudentFinder.Controllers
 
             var gradeList = _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
             ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value", GetStudentLevel(studentId).Item1);
-
-            var student = await _context.Student.SingleOrDefaultAsync(m => m.Id == studentId);
-
+            
+            var s_all = _context.StudentScheduleSpace.Where(s => s.Student.StudentsSchool == schoolId).ToList();
+            var student = s_all.Where(m => m.Id == studentId).SingleOrDefault();
             if (student == null)
             {
                 return NotFound();
             }
+
+            var selectedStudents = s_all.Select(s => new StudentsViewModel()
+            {
+                StudentId = s.Student.Id,
+                StudentsSchool = s.Student.StudentsSchool,
+                StudentSchoolId = s.Student.StudentSchoolId,
+                fName = s.Student.fName,
+                lName = s.Student.lName,
+                LevelId = s.Student.LevelId,
+                IsActive = s.Student.IsActive,
+                SpaceId = s.Space.Id,
+                Room = s.Space.Room,
+                Location = s.Space.Location,
+                GradeLevel = s.Student.Level.GradeLevel
+
+            });
+
+            var displayStudent = selectedStudents.Where(s => s.StudentId == student.Id).FirstOrDefault();
+
+            return View(displayStudent);
+
+
             
-            return View(student);
         }
 
         // POST: Students/Edit/5
