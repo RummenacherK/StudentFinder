@@ -16,9 +16,12 @@
 
 <h2>Current Period:  @ViewBag.DisplayPeriod</h2>
 
+@if (User.IsInRole("Admin,SuperAdmin"))
+{
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-default" >Create New</a>
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -37,7 +40,10 @@
             </th>
             <th>
                 <a class="btn btn-info btn-control" asp-action="AllStudents">All Students</a>
-            </th>           
+            </th>     
+            <th>
+                <a class="btn btn-info btn-control" asp-action="Index">Clear Search</a>
+            </th>          
         </tr>
         <tr>
             <th class="col-md-2">
@@ -79,10 +85,13 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Room)
                 </td>
-                <td class="text-center">
-                    <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+                <td class="text-center">                    
+                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a> 
+                    @if (User.IsInRole("Admin,SuperAdmin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> 
+                        <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+                    }
                 </td>
             </tr>
         }
@@ -130,6 +139,7 @@
                 $(this).prev('input').val('').focus();
                 $(this).hide();
             });
+                        
         });
     </script>
 }
