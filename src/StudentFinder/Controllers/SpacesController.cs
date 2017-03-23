@@ -232,35 +232,5 @@ namespace StudentFinder.Controllers
         {
             return _context.Space.Any(e => e.Id == id);
         }
-
-        //[Authorize(Roles = "User")]
-        //public async Task<int> GetUserSchool()
-        //{
-        //    //Get School of the User:  See method at bottom of controller
-
-        //    var test = HttpContext.User;
-
-        //    if (test == null)
-        //    {
-        //        RedirectToRoute("Students", "Home");
-        //    }
-        //    var userClaim = _userManager.GetUserId(test);
-        //    // var userId = Id;
-        //    var user = await _userManager.FindByIdAsync(userClaim);
-        //    if (user == null) return 0;
-        //    var has_claim = false;
-        //    var user_claim_list = await _userManager.GetClaimsAsync(user);
-        //    if (user_claim_list.Count > 0)
-        //    {
-        //        //has_claim = user_claim_list[0].Type == "SchoolId";
-
-        //        var newUserSchool = Convert.ToInt32(user_claim_list[2].Value);
-
-        //        return newUserSchool;
-        //    }
-
-        //    return 0;
-        //}
-
     }
 }

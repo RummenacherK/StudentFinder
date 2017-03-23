@@ -31,9 +31,7 @@ namespace StudentFinder.Controllers
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
-
-
-
+        
         // Get Schedule
         public IActionResult Index()
         {

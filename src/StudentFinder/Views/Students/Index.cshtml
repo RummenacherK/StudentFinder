@@ -86,10 +86,15 @@
                     @Html.DisplayFor(modelItem => item.Room)
                 </td>
                 <td class="text-center">                    
-                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a> 
-                    @if (User.IsInRole("Admin,SuperAdmin"))
+                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a>
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("Admin"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> 
+                        <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+                    }
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("SuperAdmin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
                         <a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
                     }
                 </td>

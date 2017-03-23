@@ -45,8 +45,7 @@
       "type": "build"
     },
     "Microsoft.AspNetCore.Mvc.ViewFeatures": "1.1.1",
-    "System.Linq.Parallel": "4.0.1",
-    "FluentValidation.AspNetCore": "6.4.0"
+    "System.Linq.Parallel": "4.0.1"    
   },
 
   "tools": {
