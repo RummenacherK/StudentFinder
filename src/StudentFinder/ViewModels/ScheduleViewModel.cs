@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Attributes;
+
 
 
 namespace StudentFinder.ViewModels
 {
-   // [Validator(typeof(ScheduleViewModelValidator))]
+   
     public class ScheduleViewModel
     {
         [Required]
@@ -43,6 +42,5 @@ namespace StudentFinder.ViewModels
                 return TimeSpan.FromMinutes((double)To);
             }         
         }
-    }    
-
+    }  
 }

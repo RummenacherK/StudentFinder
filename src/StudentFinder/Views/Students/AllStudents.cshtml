@@ -85,9 +85,9 @@
                 <td>
                     @(item.IsActive?"Yes":"No")
                 </td>
-                <td class="text-center">
+                <td class="col-md-3">
 
-                    <a asp-action="Details" asp-route-id="@item.StudentId">Details</a>
+                    <a class="btn btn-info" asp-action="Details" asp-route-id="@item.StudentId">Details</a>
                     @if (User.Identity.IsAuthenticated == true && User.IsInRole("Admin"))
                     {
                         <a class="btn btn-info btn-warning" asp-action="Edit" asp-route-id="@item.StudentId">Edit</a>
