@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+
+
 namespace StudentFinder.ViewModels
 {
+   
     public class ScheduleViewModel
     {
         [Required]
@@ -39,5 +42,5 @@ namespace StudentFinder.ViewModels
                 return TimeSpan.FromMinutes((double)To);
             }         
         }
-    }
+    }  
 }

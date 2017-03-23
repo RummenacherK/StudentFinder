@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace StudentFinder.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Admin, SuperAdmin")]
     public class SchedulesController : Controller
     {
         private readonly StudentFinderContext _context;
@@ -31,9 +31,7 @@ namespace StudentFinder.Controllers
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
-
-
-
+        
         // Get Schedule
         public IActionResult Index()
         {
@@ -104,6 +102,11 @@ namespace StudentFinder.Controllers
             schedule.To = (toHour * 60) + toMinute;
 
             schedule.SchoolId =  _session.GetInt32("schoolId").Value;
+
+            if(! ModelState.IsValid)
+            {
+                return View("Create", schedule);
+            }
             
             if (ModelState.IsValid)
              {

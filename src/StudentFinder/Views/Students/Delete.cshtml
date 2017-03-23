@@ -1,7 +1,8 @@
-@model StudentFinder.Models.Student
+@model StudentFinder.ViewModels.StudentsViewModel
 
 @{
     ViewData["Title"] = "Delete";
+    
 }
 
 <h2>Delete</h2>
@@ -11,12 +12,12 @@
     <h4>Student</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.GradeLevel)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.GradeLevel)
-        </dd>
+        </dd>*@
         <dt>
             @Html.DisplayNameFor(model => model.StudentSchoolId)
         </dt>
@@ -41,12 +42,24 @@
         <dd>
             @Html.DisplayFor(model => model.lName)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LevelId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LevelId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+        <dd>
+            @(Model.IsActive?"Yes":"No")
+        </dd>
     </dl>
     
     <form asp-action="Delete">
         <div class="form-actions no-color">
-            <input type="submit" value="Delete" class="btn btn-default" /> |
-            <a asp-action="Index">Back to List</a>
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            <a class="btn btn-info btn-control" asp-action="Index">Back to List</a>
         </div>
     </form>
 </div>

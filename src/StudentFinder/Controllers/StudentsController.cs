@@ -39,7 +39,6 @@ namespace StudentFinder.Controllers
         [AllowAnonymous]
         public IActionResult Home()
         {
-
             return View();
         }
 
@@ -51,7 +50,7 @@ namespace StudentFinder.Controllers
             if (int32 != null)
             {
                 int schoolId = int32.Value;
-
+                         
                 //Create Viewbags for the following data
                 var spaceList =
                     _context.Space.Where(s => s.SchoolId == schoolId)
@@ -80,7 +79,6 @@ namespace StudentFinder.Controllers
 
                 //Create Viewbag of current period
                 ViewBag.DisplayPeriod = currentPeriod.Item2;
-               //     _context.Schedule.Where(x => x.Id == currentPeriod).Select(x => x.Label).SingleOrDefault();
 
                 //Select only Active Students & students from that school       
                 var activeStudents =
@@ -135,6 +133,8 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
+            int Id = id.GetValueOrDefault();
+
             int schoolId = _session.GetInt32("schoolId").Value;
 
             var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
@@ -151,8 +151,27 @@ namespace StudentFinder.Controllers
             {
                 return NotFound();
             }
+            var space = new Space();            
+            var s_all = _context.Student.Where(s => s.StudentsSchool == schoolId).Select(x => x);
+            var selectedStudents = s_all.Select(s => new StudentsViewModel()
+            {
+                StudentId = s.Id,
+                StudentsSchool = s.StudentsSchool,
+                StudentSchoolId = s.StudentSchoolId,
+                fName = s.fName,
+                lName = s.lName,
+                LevelId = s.LevelId,
+                IsActive = s.IsActive,
+                SpaceId = s.Id,
+                Room = space.Room,
+                Location = space.Location,
+                GradeLevel = s.Level.GradeLevel
 
-            return View(student);
+            });
+
+            var displayStudent = selectedStudents.Where(s => s.StudentId == Id).Select(x => x).FirstOrDefault();
+
+            return View(displayStudent);
         }
 
         // GET: Students/Create
@@ -195,15 +214,11 @@ namespace StudentFinder.Controllers
             {
                 return View("Home");
             }
-            
-                student.StudentsSchool = schoolId.Value;
-            
 
-
+            student.StudentsSchool = schoolId.Value;
+            
             if (ModelState.IsValid)
             {
-
-
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 
@@ -221,7 +236,7 @@ namespace StudentFinder.Controllers
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-           var studentId = id;
+            var studentId = id;
 
             int schoolId = _session.GetInt32("schoolId").Value;
 
@@ -230,9 +245,9 @@ namespace StudentFinder.Controllers
             {
                 return View("Home");
             }
-                     
+
             //add check method here for correct school/claims bool
-           
+
             if (studentId == 0)
             {
                 return NotFound();
@@ -248,7 +263,7 @@ namespace StudentFinder.Controllers
             ViewBag.scheduleViewBag = scheduleList;
 
             var spaceList = _context.Space.Where(s => s.SchoolId == schoolId).OrderBy(s => s.Room).Select(a => new { id = a.Id, value = a.Room }).ToList();
-            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");           
+            ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
 
             var schoolList = _context.School.Select(s => new { id = s.Id, value = s.Name }).ToList();
             ViewBag.schoolSelectList = new SelectList(schoolList, "id", "value");
@@ -262,7 +277,7 @@ namespace StudentFinder.Controllers
             {
                 return NotFound();
             }
-            
+
             return View(student);
         }
 
@@ -321,15 +336,24 @@ namespace StudentFinder.Controllers
                 return NotFound();
             }
 
+            int studentId = id.Value;
+
             int schoolId = _session.GetInt32("schoolId").Value;
 
             var student = await _context.Student.Where(s => s.StudentsSchool == schoolId).SingleOrDefaultAsync(m => m.Id == id);
-            if (student == null)
+            var space = new Space();
+            var selectedStudent =  new StudentsViewModel()
             {
-                return NotFound();
-            }
+                StudentId = student.Id,
+                StudentsSchool = student.StudentsSchool,
+                StudentSchoolId = student.StudentSchoolId,
+                fName = student.fName,
+                lName = student.lName,
+                LevelId = student.LevelId,
+                IsActive = student.IsActive,  
+            };
 
-            return View(student);
+            return View(selectedStudent);
         }
 
         // POST: Students/Delete/5
@@ -340,9 +364,29 @@ namespace StudentFinder.Controllers
             int schoolId = _session.GetInt32("schoolId").Value;
 
             var student = await _context.Student.Where(s => s.StudentsSchool == schoolId).SingleOrDefaultAsync(m => m.Id == id);
-            _context.Student.Remove(student);
+
+            student.IsActive = false;
+            _context.Student.Update(student);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            var student_schedule = GetStudentSchedule(id);
+
+            if (student_schedule.Any())
+            {
+
+                var deleteEntry =
+                    from row in _context.StudentScheduleSpace
+                    where row.StudentId == id
+                    select row;
+
+                foreach (var row in deleteEntry)
+                {
+                    _context.StudentScheduleSpace.Remove(row);
+                }
+
+                _context.SaveChanges();
+            }
+                return RedirectToAction("Index");
         }
 
         [HttpPost, ActionName("EditSchedule")]
@@ -360,6 +404,76 @@ namespace StudentFinder.Controllers
             return RedirectToAction("Index");
         }
 
+
+        public async Task<IActionResult> AllStudents(string searchString, int? page, int spaceListFilter = 0)
+        {
+            //Get School of the User from the session
+            var int32 = _session.GetInt32("schoolId");
+            if (int32 != null)
+            {
+                int schoolId = int32.Value;
+
+                //Create Viewbags for the following data
+                var spaceList =
+                    _context.Space.Where(s => s.SchoolId == schoolId)
+                        .OrderBy(s => s.Room)
+                        .Select(a => new { id = a.Id, value = a.Room })
+                        .ToList();
+                ViewBag.SpaceSelectList = new SelectList(spaceList, "id", "value");
+
+                var scheduleList =
+                    _context.Schedule.Where(s => s.SchoolId == schoolId)
+                        .OrderBy(s => s.Label)
+                        .Select(a => new { id = a.Id, value = a.From, value2 = a.To })
+                        .ToList();
+                ViewBag.ScheduleSelectList = new SelectList(scheduleList, "id", "value", "value2");
+
+                var gradeList =
+                    _context.Level.OrderBy(s => s.Id).Select(g => new { id = g.Id, value = g.GradeLevel }).ToList();
+                ViewBag.gradeLevelSelectList = new SelectList(gradeList, "id", "value");
+
+                ViewBag.searchString = searchString;
+                
+                //Select All students from the school                
+                var s_all =
+                    _context.Student.Where(a =>
+                        a.StudentsSchool == schoolId).Select(x => x);
+                               
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    s_all =
+                        s_all.Where(
+                            s => s.fName.Contains(searchString) || s.lName.Contains(searchString));
+                }
+
+                var space = new Space();
+                
+                var selectedStudents = s_all.Select(s => new StudentsViewModel()
+                {
+                    StudentId = s.Id,
+                    StudentsSchool = s.StudentsSchool,
+                    StudentSchoolId = s.StudentSchoolId,
+                    fName = s.fName,
+                    lName = s.lName,
+                    LevelId = s.LevelId,
+                    IsActive = s.IsActive,
+                    SpaceId = s.Id,
+                    Room = space.Room,
+                    Location = space.Location,
+                    GradeLevel = s.Level.GradeLevel
+
+                });
+
+                int pageSize = 25;
+
+                return
+                    View(await PaginatedList<StudentsViewModel>.CreateAsync(selectedStudents.AsNoTracking(), page ?? 1,
+                        pageSize));
+            }
+            return Home();
+
+        }
+        
         [AllowAnonymous]
         public IActionResult About()
         {
@@ -488,31 +602,6 @@ namespace StudentFinder.Controllers
                     return new Tuple<int, string>(-1, period_label);
                 }
             }
-        }
-
-        //public int CompareTimes(DateTime today, int schoolId)
-        //{
-
-        //    int hours = today.Hour;
-        //    int min = today.Minute;
-        //    int total_min = (hours * 60) + min;
-        //    var schedule = _context.Schedule.Where(s => s.SchoolId == schoolId).Select(x => x);
-        //    var period = schedule.Where(s => s.From >= total_min && s.To <= total_min).Select(s => s).FirstOrDefault();
-
-
-        //    if (schedule.Any())
-        //    {
-        //        return 0;
-        //    }
-
-        //    var currentSchedule = schedule.Where(s => s.From >= total_min && s.To <= total_min && s.SchoolId == schoolId).Select(s => s.Id).FirstOrDefault();
-        //    if (currentSchedule == 0)
-        //    {
-        //        return schedule.Where(s => s.To >= s.From).Select(s => s.Id).FirstOrDefault();
-        //    }
-        //    return currentSchedule;
-
-        //}
-
+        }  
     }
 }

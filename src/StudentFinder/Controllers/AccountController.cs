@@ -199,13 +199,7 @@ namespace StudentFinder.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            //    private ApplicationDbContext _context;
-
-            //    public AccountController(ApplicationDbContext context )
-            //{
-            //    _context = context;
-            //}
-            if (returnUrl == null)
+           if (returnUrl == null)
             {
                 returnUrl = "/";
             }
@@ -245,9 +239,7 @@ namespace StudentFinder.Controllers
                 {
                     // Set selected Role, all new users get User
                     await _userManager.AddToRoleAsync(user, "USER");
-
-
-
+                    
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

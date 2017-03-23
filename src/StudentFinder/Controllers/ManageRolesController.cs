@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace StudentFinder.Controllers
 {
-    //[Authorize(Roles ="SuperAdmin")]
+    [Authorize(Roles ="SuperAdmin")]
     public class ManageRolesController : Controller
     {
         private ApplicationDbContext db_context;

@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+
+
 namespace StudentFinder.Models
 {
     public class Schedule
@@ -18,11 +20,11 @@ namespace StudentFinder.Models
         public string Label { get; set; }
         [Required]
         [Display(Name = "Start Time")]
-        public int From { get; set; }      
+        public int From { get; set; }
         [Required]
         [Display(Name = "End Time")]
         public int To { get; set; }
 
-        public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }        
+        public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }
     }
 }

@@ -251,6 +251,8 @@ C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\Stud
 C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\StudentFinder\20170321224559_Initial.Designer.cs
 C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\StudentFinder\20170321225005_UpdateSSSIdKey.cs
 C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\StudentFinder\20170321225005_UpdateSSSIdKey.Designer.cs
+C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\StudentFinder\20170322002404_PrimaryKeyUpdate.cs
+C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\StudentFinder\20170322002404_PrimaryKeyUpdate.Designer.cs
 C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Migrations\StudentFinder\StudentFinderContextModelSnapshot.cs
 C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Models\ApplicationUser.cs
 C:\Users\IEUser\Documents\GitHub\StudentFinder\src\StudentFinder\Models\Level.cs

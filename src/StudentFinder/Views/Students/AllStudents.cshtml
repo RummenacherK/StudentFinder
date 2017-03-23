@@ -1,10 +1,10 @@
-@model PaginatedList<StudentFinder.ViewModels.StudentsViewModel>
+﻿@model PaginatedList<StudentFinder.ViewModels.StudentsViewModel>
 
 @using StudentFinder.Infrastructure
 @using StudentFinder.Models
 @using StudentFinder.ViewModels
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "All Students";
     SelectList spaceList = ViewBag.SpaceSelectList;
     SelectList scheduleList = ViewBag.ScheduleSelectList;
     if (string.IsNullOrEmpty(ViewBag.searchString))
@@ -14,19 +14,16 @@
 
 }
 
-<h2>Current Period:  @ViewBag.DisplayPeriod</h2>
+<h2>Student List</h2>
 
-@if (User.IsInRole("Admin,SuperAdmin"))
-{
 <p>
-    <a asp-action="Create" class="btn btn-default" >Create New</a>
+    <a class="btn btn-info btn-control" asp-action="Create">Create New</a>
 </p>
-}
 <table class="table">
     <thead>
         <tr>
             <th colspan="2" class="text-justify">
-                <form method="post" id="SearchString" action="@Url.Action("Index", "Students")">
+                <form method="post" id="SearchString" action="@Url.Action("AllStudents", "Students")">
                     <div class="form-group no-color has-feedback">
                         <input class="form-control hasclear" type="text" id="SearchString" name="SearchString" value="" placeholder="@ViewBag.searchString" />
                         <span class="clearer gliphyicon gliphyicon-remove form-control-feedback"></span>
@@ -34,16 +31,13 @@
                 </form>
             </th>
             <th>
-                <form method="post" id="spaceFilter" action="@Url.Action("Index", "Students")">
+                <form method="post" id="spaceFilter" action="@Url.Action("AllStudents", "Students")">
                     @Html.DropDownList("spaceListFilter", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                 </form>
             </th>
             <th>
-                <a class="btn btn-info btn-control" asp-action="AllStudents">All Students</a>
-            </th>     
-            <th>
-                <a class="btn btn-info btn-control" asp-action="Index">Clear Search</a>
-            </th>          
+                <a class="btn btn-info btn-control" asp-action="Index">Back to Current Schedule</a>
+            </th> 
         </tr>
         <tr>
             <th class="col-md-2">
@@ -58,8 +52,11 @@
             <th class="col-md-2">
                 <h4>School ID</h4>
             </th>
-            <th class="col-md-2">
+            @*<th class="col-md-2">
                 <h4>Current Room</h4>
+            </th>*@
+            <th class="col-md-2">
+                <h4>Active Student?</h4>
             </th>
             <th>
                 <h4 class="text-center">Details</h4>
@@ -70,6 +67,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td class="hidden">
+                    @Html.DisplayFor(modelItem => item.StudentId)
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.lName)
                 </td>
@@ -81,11 +81,12 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.StudentSchoolId)
-                </td>           
-                <td>
-                    @Html.DisplayFor(modelItem => item.Room)
                 </td>
-                <td class="col-md-3">                
+                <td>
+                    @(item.IsActive?"Yes":"No")
+                </td>
+                <td class="col-md-3">
+
                     <a class="btn btn-info" asp-action="Details" asp-route-id="@item.StudentId">Details</a>
                     @if (User.Identity.IsAuthenticated == true && User.IsInRole("Admin"))
                     {
@@ -108,14 +109,14 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 <div class="center-block">
-    <a asp-action="Index"
+    <a asp-action="AllStudents"
        asp-route-sortOrder="@ViewData["CurrentSort"]"
        asp-route-page="@(Model.PageIndex - 1)"
        asp-route-currentFilter="@ViewData["CurrentFilter"]"
        class="btn btn-default @prevDisabled btn">
         Previous
     </a>
-    <a asp-action="Index"
+    <a asp-action="AllStudents"
        asp-route-sortOrder="@ViewData["CurrentSort"]"
        asp-route-page="@(Model.PageIndex + 1)"
        asp-route-currentFilter="@ViewData["CurrentFilter"]"
@@ -144,7 +145,6 @@
                 $(this).prev('input').val('').focus();
                 $(this).hide();
             });
-                        
         });
     </script>
 }
