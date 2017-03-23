@@ -23,7 +23,7 @@
     <thead>
         <tr>
             <th colspan="2" class="text-justify">
-                <form method="post" id="SearchString" action="@Url.Action("Index", "Students")">
+                <form method="post" id="SearchString" action="@Url.Action("AllStudents", "Students")">
                     <div class="form-group no-color has-feedback">
                         <input class="form-control hasclear" type="text" id="SearchString" name="SearchString" value="" placeholder="@ViewBag.searchString" />
                         <span class="clearer gliphyicon gliphyicon-remove form-control-feedback"></span>
@@ -31,7 +31,7 @@
                 </form>
             </th>
             <th>
-                <form method="post" id="spaceFilter" action="@Url.Action("Index", "Students")">
+                <form method="post" id="spaceFilter" action="@Url.Action("AllStudents", "Students")">
                     @Html.DropDownList("spaceListFilter", spaceList, "All", new { @class = "form-control", @style = "width: 16rem; display:inline-block" })
                 </form>
             </th>
