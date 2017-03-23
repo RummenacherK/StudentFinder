@@ -6,7 +6,7 @@
 <h2>Spaces</h2>
 
 <p>
-    <a asp-action="Create">Create New Space</a>
+    <a class="btn btn-info btn-control" asp-action="Create">Create New Space</a>
 </p>
 
 <form asp-action="Index" method="get">
@@ -14,7 +14,7 @@
         <p>
             Find by Room: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
             <input type="submit" value="Search" class="btn btn-default btn" /> |
-            <a asp-action="Index">Back to Full List</a>
+            <a class="btn btn-info btn-control" asp-action="Index">Back to Full List</a>
         </p>
     </div>
 </form>
@@ -63,9 +63,9 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a class="btn btn-info btn-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a class="btn btn-info btn-control" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="btn btn-info btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
         }
