@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.Attributes;
 
 
 namespace StudentFinder.Models
 {
+   // [Validator(typeof(ScheduleValidator))]
     public class Schedule
     {
         [Key]
@@ -25,5 +28,4 @@ namespace StudentFinder.Models
         public int To { get; set; }
 
         public ICollection<StudentScheduleSpace> StudentScheduleSpace { get; set; }        
-    }    
 }
